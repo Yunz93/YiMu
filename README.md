@@ -15,9 +15,10 @@ The application interface is currently in **Simplified Chinese**. Project docume
 ## Features
 
 - **Understand each move:** explanations of opening moves, extensions, connections, atari, and captures, plus the change in your estimated area. Inspect the AI's latest response as well.
+- **Preview before committing:** hover with a mouse to explore a move, or click/tap to lock a preview. Inspect liberties, captures, influence, and estimated area changes, then confirm or cancel. Previews do not change the actual game, progress, or AI turn. Switch preview off for direct play.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
-- **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9 or 13×13 boards.
-- **Learn by doing:** six interactive lessons covering liberties, captures, illegal moves, counting, connections, and two eyes.
+- **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
+- **Learn by doing:** 16 interactive lessons covering basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
 - **Understand the score:** Chinese area scoring with 7.5 points of komi for White, a separate unsettled-area indicator, and manual dead-group marking at the end. Resume play to resolve disputed life and death.
 - **Pick up where you left off:** games and learning progress are saved in the current browser using `localStorage`.
 - **Responsive and lightweight:** native HTML, CSS, and JavaScript modules with no runtime npm dependencies, backend, database, or AI API key.
@@ -62,7 +63,14 @@ npm test
 npm run build
 ```
 
-Tests cover shared liberties, multi-stone captures, suicide and capture exceptions, positional superko, occupied and out-of-bounds points, Chinese area scoring, dead-stone removal, empty-board estimates, and move explanations.
+Tests also verify non-mutating previews, 19×19 board edges, ko and seki lesson positions, and the standard-board coordinate targets. The original tests cover shared liberties, multi-stone captures, suicide and capture exceptions, positional superko, occupied and out-of-bounds points, Chinese area scoring, dead-stone removal, empty-board estimates, and move explanations.
+
+## Learning flow
+
+1. Start on 9×9, or select **19 路 · 标准棋盘** in game settings for the standard 361-intersection board. On small screens, the standard board scrolls horizontally inside its panel.
+2. Preview is on by default. Click or tap an intersection, inspect the preview, and choose **确认落子** (Confirm move) or **取消预览** (Cancel). A desktop mouse can hover first and click to lock. Press Escape to cancel; keyboard users can move with arrow keys and select with Enter.
+3. Visit **规则入门** for the 16 categorized lessons. The original six lesson IDs are preserved, so existing completion progress remains valid.
+4. Switch between liberties, influence, and territory while previewing to compare the proposed position. Estimates remain heuristic and exclude any AI reply.
 
 ## Rules and scoring
 
@@ -89,12 +97,14 @@ dist/
   index.html       Page structure and metadata
   styles.css       Responsive interface
   app.js           Game state, lessons, interactions, persistence
-  engine.js        Go rules, scoring, estimates, move explanations
+  engine.js        Go rules, scoring, estimates, move explanations, pure previews
+  lessons.js       16 interactive lesson definitions
   ai.js            AI search in a Web Worker
 scripts/
   build.mjs        Static deployment validation
 tests/
   engine.test.mjs  Rule and scoring tests
+  learning.test.mjs Preview, 19×19, and lesson-position regression tests
 docs/
   preview.png      Application screenshot
 vercel.json        Vercel deployment settings

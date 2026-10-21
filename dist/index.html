@@ -4,7 +4,7 @@
 <aside class="sidebar">
  <a class="brand" href="./" aria-label="一目首页"><span class="brand-mark"><i></i><i></i></span><span>一目<span class="brand-en">YIMU GO</span></span></a>
  <div class="sidebar-caption">慢慢来，每一步都算数。</div>
- <nav aria-label="主导航"><button class="nav-item active" data-nav="game"><span data-icon="board"></span>学习棋局<span class="nav-dot"></span></button><button class="nav-item" data-nav="rules"><span data-icon="book"></span>规则入门<span class="nav-tag">6 课</span></button><button class="nav-item" data-nav="progress"><span data-icon="chart"></span>我的学习</button></nav>
+ <nav aria-label="主导航"><button class="nav-item active" data-nav="game"><span data-icon="board"></span>学习棋局<span class="nav-dot"></span></button><button class="nav-item" data-nav="rules"><span data-icon="book"></span>规则入门<span class="nav-tag">16 课</span></button><button class="nav-item" data-nav="progress"><span data-icon="chart"></span>我的学习</button></nav>
  <div class="sidebar-rule"></div><div class="side-label">你的围棋之旅</div>
  <div class="journey"><span class="journey-icon" data-icon="sprout"></span><div><b>从第一手开始</b><p>不必急着赢，先看懂棋。</p></div><div class="journey-track"><i id="journey-fill"></i></div><span id="journey-text">完成入门课，点亮围棋之旅</span></div>
  <div class="side-bottom"><div class="quote-symbol">“</div><p>棋盘很大，<br>我们一步一步来。</p><div class="side-mountains"><i></i><i></i><i></i><span>山高水长 · 落子无悔</span></div><button class="side-help" id="help-btn"><span data-icon="help"></span>使用指南<span>↗</span></button></div>
@@ -17,7 +17,9 @@
    <section class="board-card" aria-label="围棋对局">
     <div class="board-toolbar"><div class="board-title"><h2>边下边学</h2><span id="board-size-tag">9 路入门棋盘</span></div><button class="text-button" id="board-settings"><span data-icon="sliders"></span>对局设置</button></div>
     <div class="players"><div class="player"><span class="player-stone black"></span><div><b id="human-name">你 · 执黑</b><span id="human-status">轮到你落子</span></div><span class="turn-badge" id="turn-badge">你的回合</span></div><span class="versus">VS</span><div class="player ai-player"><div><b id="ai-name">一目 AI · 执白</b><span id="ai-status"><i class="online-dot"></i> 耐心的围棋陪练</span></div><span class="player-stone white"></span></div></div>
+    <div class="preview-controls"><label class="preview-switch"><input type="checkbox" id="preview-toggle" checked><span class="switch-track"></span>落子前预览</label><span id="preview-help">先点选，再确认；鼠标可悬停试落</span></div>
     <div class="board-surface"><div id="board-wrap"><svg id="board" viewBox="0 0 560 560" role="group" aria-label="9 路围棋棋盘，点击交叉点落子"></svg></div><div class="board-corner tl"></div><div class="board-corner br"></div></div>
+    <section id="move-preview" class="move-preview" aria-label="落子影响预览" aria-live="polite" hidden></section>
     <div class="board-view-bar"><span class="view-caption"><span data-icon="eye"></span>看懂棋盘</span><div class="view-tabs" role="group" aria-label="棋盘视图"><button data-view="normal" class="selected">棋盘</button><button data-view="liberties">气 <span class="tiny-dot"></span></button><button data-view="influence">势力</button><button data-view="territory">地盘</button></div><button class="icon-btn" id="view-help" aria-label="视图说明" data-icon="help"></button></div>
     <div id="view-description" class="view-description">点击棋盘交叉点落子。淡绿色圆环是推荐落点，试着从角部开始。</div>
     <div class="board-actions"><button id="undo-btn" class="action-btn"><span data-icon="undo"></span>悔一手</button><button id="hint-btn" class="action-btn"><span data-icon="bulb"></span>给我提示</button><div class="action-spacer"></div><button id="pass-btn" class="action-btn">停一手</button><button id="finish-btn" class="action-btn finish-action"><span data-icon="flag"></span>结束并数子</button></div>

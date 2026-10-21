@@ -24,5 +24,13 @@ if(atari.length)return {title:'打吃！对方只剩一口气',text:`你压缩�
 const distinct=new Set();for(const p of allies)distinct.add(Math.min(...group(before,p,n).stones));
 if(distinct.size>1)return {title:'连接，让棋子一起呼吸',text:`你把 ${distinct.size} 块棋连接成一块，它们共享 ${g.libs.size} 口气。连接通常能减少被分断、包围的风险。`,tag:'连接',libs:g.libs.size};
 if(allies.length)return {title:'延伸，扩大这一块棋的空间',text:`${name}向外多走了一步。这一块棋现在共有 ${g.stones.length} 颗棋子、${g.libs.size} 口气。相连的棋子会共享气。`,tag:'延伸',libs:g.libs.size};
-const x=i%n,y=Math.floor(i/n),edge=Math.min(x,y,n-x-1,n-y-1);
-return {title:edge<=2?'占据一角，建立自己的据点':'向中腹发展，拓展影响力',text:edge<=2?'靠近角和边，借助棋盘边界，更容易用较少的棋子围住地盘。先占角，再走边，是常见的开局思路。':'这颗棋子影响着周围的交叉点。中腹空间大，发展更自由，但围成确定的地盘通常需要更多棋子。',tag:edge<=2?'布局':'扩张',libs:g.libs.size};}
+const x=i%n,y=Math.floor(i/n),dx=Math.min(x,n-x-1),dy=Math.min(y,n-y-1),edge=Math.min(dx,dy),corner=dx<=3&&dy<=3;
+return {title:corner?'占据一角，建立自己的据点':edge<=3?'沿边发展，借助边界围地':'向中腹发展，拓展影响力',text:corner?'角部有两条棋盘边界帮忙。三路通常侧重实地，四路通常兼顾向外发展；具体好坏还要看周围棋子。':edge<=3?'这颗棋子靠近一条棋盘边界，沿边发展通常比中腹更容易围地。还要留意与角部棋子的连接。':'这颗棋子影响着周围的交叉点。中腹空间大，发展更自由，但围成确定的地盘通常需要更多棋子。',tag:edge<=3?'布局':'扩张',libs:g.libs.size};}
+
+// Pure analysis: previews use the same legality and scoring functions as real moves.
+export function previewMove(board,i,color,n,history=[],komi=7.5){
+ const result=play(board,i,color,n,history);
+ if(result.error)return {i,error:result.error};
+ const before=estimate(board,n,komi),after=estimate(result.board,n,komi);
+ return {...result,i,before,after,blackDelta:after.black-before.black,whiteDelta:after.white-before.white,neutralDelta:after.neutral-before.neutral,explanation:explain(board,result.board,i,color,n,result.captured)};
+}
