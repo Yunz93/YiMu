@@ -1,0 +1,13 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {group,play,key,score,estimate,explain} from '../dist/engine.js';
+const board=(stones,n=5)=>{const b=Array(n*n).fill(0);for(const [i,c] of stones)b[i]=c;return b;};
+test('气按上下左右去重，相连棋子共享气',()=>{const b=board([[12,1],[13,1]]);const g=group(b,12,5);assert.equal(g.stones.length,2);assert.equal(g.libs.size,6);assert(!g.libs.has(6));});
+test('最后一口气被填住，提掉对方整块棋',()=>{const b=board([[12,2],[13,2],[7,1],[8,1],[11,1],[14,1],[17,1]]);const r=play(b,18,1,5);assert.deepEqual(r.captured.sort((a,b)=>a-b),[12,13]);assert.equal(r.board[12],0);assert.equal(b[12],2);});
+test('禁自杀，但先提子后获得气合法',()=>{const b=board([[7,2],[11,2],[13,2],[17,2]]);assert.match(play(b,12,1,5).error,/禁入点/);const c=board([[1,2],[5,2],[2,1],[6,1],[10,1]]);const r=play(c,0,1,5);assert(!r.error);assert.equal(r.captured.length,2);assert.equal(r.libs,2);});
+test('超级劫禁止重复此前布局',()=>{const b=board([[12,2],[7,1],[11,1],[13,1]]);const result=play(b,17,1,5);assert.match(play(b,17,1,5,[key(result.board)]).error,/重复/);});
+test('有棋子位置不能落子，出界不能落子',()=>{const b=board([[12,1]]);assert(play(b,12,2,5).error);assert(play(b,-1,1,5).error);assert(play(b,25,1,5).error);});
+test('中国规则：活子加围空，中立区域不归双方，贴目只加一次',()=>{const b=board([[1,1],[6,1],[11,1],[16,1],[21,1],[3,2],[8,2],[13,2],[18,2],[23,2]]);const s=score(b,5,7.5);assert.equal(s.black,10);assert.equal(s.white,10);assert.equal(s.neutral,5);assert.equal(s.diff,-7.5);assert.equal(s.black+s.white+s.neutral,25);});
+test('死棋移出棋盘后再判断空点归属',()=>{const b=board([[0,1],[1,1],[2,1],[5,1],[6,2],[7,1],[10,1],[11,1],[12,1],[24,2]]);const s=score(b,5,0,[6]);assert.equal(s.owner[6],1);assert.equal(s.removed[2],1);assert.equal(b[6],2);});
+test('空盘估算不把未定点送给任何一方',()=>{const e=estimate(Array(81).fill(0),9);assert.equal(e.black,0);assert.equal(e.white,0);assert.equal(e.neutral,81);assert.equal(e.diff,-7.5);});
+test('落子讲解识别提子与连接',()=>{const b=board([[12,2],[7,1],[11,1],[13,1]]);const r=play(b,17,1,5);assert.equal(explain(b,r.board,17,1,5,r.captured).tag,'提子');const c=board([[11,1],[13,1]]),q=play(c,12,1,5);assert.equal(explain(c,q.board,12,1,5,[]).tag,'连接');});

@@ -1,0 +1,6 @@
+.git/
+.openai/
+docs/
+tests/
+README.md
+README.zh-CN.md
