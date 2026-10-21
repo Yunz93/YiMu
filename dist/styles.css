@@ -39,3 +39,60 @@ html{scrollbar-gutter:stable}
  .score-verdict{height:64px;min-height:64px}
  .move-preview{height:158px}
 }
+
+.board-toolbar-actions{display:flex;align-items:center;gap:12px;margin-left:auto;flex-shrink:0}
+.global-mode-toggle{padding:6px 9px;font-size:10px;white-space:nowrap}
+.global-mode-toggle .icon{width:14px;height:14px}
+.global-score{display:flex;align-items:center;justify-content:center;gap:10px;white-space:nowrap;font-size:11px;color:#738466}
+.global-score[hidden]{display:none}
+.global-score b{font-size:19px;font-weight:550;color:#3f5d35;font-variant-numeric:tabular-nums}
+.global-score-colon{color:#adb7a2}
+.global-score small{font-size:8px;color:#8a987e}
+#global-turn{padding:4px 7px;border-radius:4px;background:#edf3e6;font-size:9px;color:#648151}
+body.board-global-mode{overflow:hidden}
+.board-global-mode>.sidebar,.board-global-mode .topbar,.board-global-mode .page-heading,.board-global-mode .learning-section,.board-global-mode main>footer,.board-global-mode .insight-column{display:none}
+.board-global-mode .workspace{margin:0;height:100vh;height:100dvh}
+.board-global-mode main{width:100%;max-width:none;height:100%;padding:12px}
+.board-global-mode .game-layout{display:block;width:100%;height:100%}
+.board-global-mode .board-card{display:flex;flex-direction:column;width:100%;max-width:1440px;height:100%;margin:0 auto;overflow:hidden}
+.board-global-mode .board-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;flex:none;padding:10px 20px 0}
+.board-global-mode .board-toolbar-actions{justify-self:end}
+.board-global-mode .players{flex:none;min-height:36px;margin:8px 20px 10px}
+.board-global-mode .preview-controls{flex:none;margin:0 20px 8px}
+.board-global-mode .board-stage{display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;min-height:0;width:100%;overflow:hidden}
+.board-global-mode .board-stage .board-surface{width:var(--global-board-size,min(100%,calc(100vh - 300px)));max-width:none;min-width:0;aspect-ratio:1;margin:0;padding:6px;overflow:hidden;flex:none}
+.board-global-mode .board-surface #board-wrap{width:100%;min-width:0;max-width:none}
+.board-global-mode .move-preview{flex:none;grid-template-columns:minmax(95px,1fr) minmax(0,2fr);grid-template-rows:1fr;align-items:center;gap:10px;height:48px;margin:6px 20px 0;padding:4px 12px}
+.board-global-mode .move-preview[hidden]{display:none}
+.board-global-mode .move-preview .preview-heading>span,.board-global-mode .move-preview .preview-explanation{display:none}
+.board-global-mode .preview-metrics{gap:10px}
+.board-global-mode .preview-metrics b{font-size:11px;margin-top:3px}
+.board-global-mode .board-view-bar{flex:none;padding:5px 20px;min-height:36px}
+.board-global-mode .view-tabs{margin-left:auto}
+.board-global-mode #view-description{display:none}
+.board-global-mode .board-actions{flex:none;min-height:44px;padding:9px 20px}
+.board-global-mode .toast{left:50%;bottom:64px}
+@media(max-width:760px){
+ .board-global-mode main{padding:6px}
+ .board-global-mode .board-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:5px 8px;padding:8px 12px 0}
+ .board-global-mode .global-score{grid-column:1/-1;grid-row:2;min-height:25px;gap:9px}
+ .board-global-mode .global-score b{font-size:16px}
+ .board-global-mode .players{margin:5px 12px 8px;min-height:32px}
+ .board-global-mode .player-stone{width:24px;height:24px}
+ .board-global-mode .preview-controls{margin:0 12px 5px}
+ .board-global-mode #preview-help{max-width:none;font-size:8px}
+ .board-global-mode .board-stage .board-surface{padding:4px}
+ .board-global-mode .move-preview{grid-template-columns:80px minmax(0,1fr);gap:6px;height:47px;margin:4px 12px 0;padding:4px 8px}
+ .board-global-mode .preview-heading strong{font-size:10px}
+ .board-global-mode .preview-metrics{gap:5px}
+ .board-global-mode .preview-metrics>span{font-size:8px}
+ .board-global-mode .preview-metrics b{font-size:10px}
+ .board-global-mode .board-view-bar{padding:4px 12px;gap:9px;min-height:34px}
+ .board-global-mode .view-caption{display:none}
+ .board-global-mode .view-tabs{margin-left:0;flex:1}
+ .board-global-mode .board-actions{padding:8px 12px;gap:13px;min-height:42px}
+ .board-global-mode .board-toolbar-actions{gap:9px}
+}
+@media(max-height:560px){
+ .board-global-mode .players,.board-global-mode .preview-controls,.board-global-mode .move-preview{display:none}
+}

@@ -14,6 +14,7 @@ The application interface is currently in **Simplified Chinese**. Project docume
 
 - **Understand each move:** explanations of opening moves, extensions, connections, atari, and captures, plus the change in your estimated area. Inspect the AI's latest response as well.
 - **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. Clicking or tapping an intersection immediately plays the move, with no second confirmation. Hovering does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
+- **Global board mode:** expand the complete board into a focused viewport, with live scores, turn status, board views, and game controls. The standard 19×19 board fits the available space without horizontal scrolling in this mode. Click **全局模式** above the board to enter; click **退出全局** or press Escape to leave. Games and AI thinking continue across mode changes.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
 - **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
 - **Learn by doing:** 16 interactive lessons covering basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
