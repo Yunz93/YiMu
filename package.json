@@ -1,6 +1,6 @@
 {
   "name": "yimu",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "YiMu — an interactive Go learning website with move explanations, board visualizations, and a browser-based AI companion.",
   "private": true,
   "type": "module",
