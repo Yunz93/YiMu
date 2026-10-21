@@ -10,12 +10,10 @@ YiMu is an interactive website for people who find Go difficult to learn. It exp
 
 The application interface is currently in **Simplified Chinese**. Project documentation is available in English and Chinese.
 
-![YiMu learning interface with an interactive Go board, move explanations, scoring, and beginner lessons](docs/preview.png)
-
 ## Features
 
 - **Understand each move:** explanations of opening moves, extensions, connections, atari, and captures, plus the change in your estimated area. Inspect the AI's latest response as well.
-- **Preview before committing:** hover with a mouse to explore a move, or click/tap to lock a preview. Inspect liberties, captures, influence, and estimated area changes, then confirm or cancel. Previews do not change the actual game, progress, or AI turn. Switch preview off for direct play.
+- **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. Clicking or tapping an intersection immediately plays the move, with no second confirmation. Hovering does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
 - **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
 - **Learn by doing:** 16 interactive lessons covering basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
@@ -68,9 +66,9 @@ Tests also verify non-mutating previews, 19×19 board edges, ko and seki lesson 
 ## Learning flow
 
 1. Start on 9×9, or select **19 路 · 标准棋盘** in game settings for the standard 361-intersection board. On small screens, the standard board scrolls horizontally inside its panel.
-2. Preview is on by default. Click or tap an intersection, inspect the preview, and choose **确认落子** (Confirm move) or **取消预览** (Cancel). A desktop mouse can hover first and click to lock. Press Escape to cancel; keyboard users can move with arrow keys and select with Enter.
+2. Preview is on by default. Hover over an intersection to inspect a move; click or tap to play immediately, without a confirmation button. Move the mouse away or press Escape to dismiss a preview. Keyboard users can preview with arrow keys and play with Enter. Turn preview off at any time; the preference persists after refresh.
 3. Visit **规则入门** for the 16 categorized lessons. The original six lesson IDs are preserved, so existing completion progress remains valid.
-4. Switch between liberties, influence, and territory while previewing to compare the proposed position. Estimates remain heuristic and exclude any AI reply.
+4. Use the liberties, influence, and territory views to explore the proposed position with mouse hover or keyboard arrows. Estimates remain heuristic and exclude any AI reply.
 
 ## Rules and scoring
 
