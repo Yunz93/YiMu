@@ -1,0 +1,10 @@
+<view class="page"><view class="eyebrow">LEARN BY DOING</view><view class="title">学习中心</view><view class="subtitle">每次学一个小知识，再回棋盘试试看。</view>
+ <view class="stats"><view class="stat"><view class="stat-value">{{stats.completed.length}} / {{total}}</view><view class="stat-label">已完成课程</view></view><view class="stat"><view class="stat-value">{{stats.moves}}</view><view class="stat-label">亲手落子</view></view><view class="stat"><view class="stat-value">{{stats.games}}</view><view class="stat-label">完成棋局</view></view></view>
+ <view class="row note"><text>课程进度</text><text>{{percent}}%</text></view><view class="progress"><view class="progress-fill" style="width:{{percent}}%"></view></view>
+ <view class="card resume"><view class="muted">{{percent === 100 ? '全部学完，随时回来巩固' : '下一节未完成课程'}}</view><view class="section-title">{{resumeTitle}}</view><button class="primary" bindtap="resume">{{resumeLabel}} →</button></view>
+ <view class="chips"><button wx:for="{{categories}}" wx:key="*this" class="chip {{category === item ? 'selected' : ''}}" data-category="{{item}}" bindtap="filterCategory">{{item}}</button></view>
+ <view class="row"><picker range="{{statusLabels}}" value="{{statusIndex}}" bindchange="filterStatus"><view class="picker">{{statusLabels[statusIndex]}} ▾</view></picker><text class="muted">{{courses.length}} 节课程</text></view>
+ <view class="course-grid"><button wx:for="{{courses}}" wx:key="id" class="course card" data-id="{{item.id}}" bindtap="open"><view class="row course-meta"><text>{{item.number}} · {{item.tag}}</text><text class="success">{{item.done ? '✓ 已完成' : '待学习'}}</text></view><view class="section-title">{{item.title}}</view><view class="muted">{{item.desc}}</view><view class="course-action">{{item.done ? '复习本课' : '开始学习'}} →</view></button></view>
+ <view wx:if="{{!courses.length}}" class="empty"><view class="paragraph">当前筛选下暂时没有课程。</view><button class="plain" bindtap="resetFilters">查看全部课程</button></view>
+ <view class="note">进度保存在本机，不会自动与网页版或其他设备同步。</view>
+</view>

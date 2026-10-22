@@ -1,0 +1,1 @@
+.board{margin:0 auto;background:#e8c894;border:1px solid #d5b47c;border-radius:10rpx;overflow:hidden;box-shadow:inset 0 0 25rpx rgba(165,125,56,.08),0 5rpx 12rpx rgba(121,97,50,.08)}.canvas{display:block}

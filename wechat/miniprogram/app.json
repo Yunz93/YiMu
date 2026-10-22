@@ -1,0 +1,9 @@
+{
+  "pages": ["pages/game/index", "pages/learn/index", "pages/lesson/index", "pages/about/index"],
+  "window": {"navigationBarTitleText": "一目 · 把围棋学明白", "navigationBarBackgroundColor": "#f7f8f5", "navigationBarTextStyle": "black", "backgroundColor": "#f7f8f5"},
+  "tabBar": {"color": "#8b928b", "selectedColor": "#426650", "backgroundColor": "#ffffff", "borderStyle": "white", "list": [{"pagePath": "pages/game/index", "text": "学习棋局"}, {"pagePath": "pages/learn/index", "text": "学习中心"}, {"pagePath": "pages/about/index", "text": "关于一目"}]},
+  "workers": "workers",
+  "usingComponents": {"go-board": "/components/go-board/index"},
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

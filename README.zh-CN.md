@@ -23,6 +23,10 @@ YiMu 是一个面向围棋初学者的交互式学习网站。如果你一直弄
 - **自动保存进度**：棋局、落子次数、已完成课程和完成棋局数保存在当前浏览器的 `localStorage` 中。
 - **轻量且适配手机**：原生 HTML、CSS、JavaScript 模块，无运行时 npm 依赖，不需要后端、数据库或 AI API Key。
 
+## 微信小程序版
+
+仓库新增原生小程序版本 [`wechat/`](wechat/README.zh-CN.md)，包含 Canvas 棋盘、微信 Worker 本地 AI、长按预览、全部 16 节互动课和统一学习中心。运行 `npm run build:wechat` 后，将 **`wechat/` 目录**导入微信开发者工具并使用真实 AppID。详见[导入、隐私与上线说明](wechat/README.zh-CN.md)。备案、服务类目确认、真机测试和微信上传审核需单独完成，GitHub／Vercel 发布不会代替小程序发布。
+
 ## 一键部署到 Vercel
 
 点击上方 **Deploy with Vercel** 按钮，登录 Vercel，选择 Git 账号及新仓库名称，点击 **Deploy**，即可创建一份项目副本并发布自己的围棋学习网站。

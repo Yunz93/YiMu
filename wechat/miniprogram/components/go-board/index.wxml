@@ -1,0 +1,3 @@
+<view class="board" style="width:{{size}}px;height:{{size}}px">
+  <canvas id="board" type="2d" class="canvas" style="width:{{size}}px;height:{{size}}px" disable-scroll="{{holding}}" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd" bindtouchcancel="touchCancel" aria-label="{{n}}路围棋棋盘，轻点落子，长按预览" />
+</view>

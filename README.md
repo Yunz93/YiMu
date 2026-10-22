@@ -23,6 +23,10 @@ The application interface is currently in **Simplified Chinese**. Project docume
 - **Pick up where you left off:** games and learning progress are saved in the current browser using `localStorage`.
 - **Responsive and lightweight:** native HTML, CSS, and JavaScript modules with no runtime npm dependencies, backend, database, or AI API key.
 
+## WeChat Mini Program
+
+A native WeChat edition is available in [`wechat/`](wechat/README.md), with a Canvas board, local AI Worker, touch previews, all 16 lessons, and the unified learning center. Run `npm run build:wechat`, then import **the `wechat/` directory** into WeChat DevTools using your AppID. Read the [setup and release guide](wechat/README.md) or [中文说明](wechat/README.zh-CN.md). Mini Program filing, category eligibility, physical-device testing, upload, and review remain separate from GitHub/Vercel publishing.
+
 ## Deploy to Vercel
 
 Click **Deploy with Vercel** above, sign in to Vercel, choose your Git account and repository name, then click **Deploy**. Vercel creates a copy of the repository and publishes your own instance.
