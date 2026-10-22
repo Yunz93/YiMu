@@ -2,9 +2,11 @@ import {readFile,writeFile,mkdir,readdir,stat} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {resolve,dirname,relative} from 'node:path';
 import {spawnSync} from 'node:child_process';
+import {checkWechatProject} from './wechat-project.mjs';
 const root=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const destination=resolve(root,'wechat/miniprogram');
 const check=process.argv.includes('--check');
+await checkWechatProject(resolve(root,'wechat'));
 async function emit(path,source){
  const target=resolve(destination,path);
  if(check){if(await readFile(target,'utf8')!==source)throw new Error(`${path} is stale; run npm run build:wechat`);}
@@ -32,4 +34,4 @@ const bytes=await verify(destination),app=JSON.parse(await readFile(resolve(dest
 for(const page of app.pages)for(const ext of ['js','json','wxml','wxss'])await stat(resolve(destination,`${page}.${ext}`));
 for(const ext of ['js','json','wxml','wxss'])await stat(resolve(destination,`components/go-board/index.${ext}`));
 if(bytes>2*1024*1024)throw new Error('Mini program main package exceeds 2 MiB; use subpackages.');
-console.log(`YiMu WeChat: ${check?'generated core verified':'core synchronized'}, JS/JSON/pages validated (${Math.ceil(bytes/1024)} KiB source). Import ${relative(root,resolve(root,'wechat'))}/ into WeChat DevTools.`);
+console.log(`YiMu WeChat: ${check?'generated core verified':'core synchronized'}, JS/JSON/pages validated (${Math.ceil(bytes/1024)} KiB source). Import ${relative(root,resolve(root,'wechat'))}/ into WeChat DevTools as a regular Mini Program (not Mini Game). AppID account type must be verified in the WeChat console.`);

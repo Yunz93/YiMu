@@ -14,9 +14,21 @@ npm run build:wechat
 npm test
 ```
 
-Import **the `wechat/` directory** into WeChat DevTools. `project.config.json` points to `miniprogram/` as its code root. Supply your real Mini Program **AppID**. The checked-in `touristappid` is only a local placeholder, subject to DevTools guest/test-account restrictions, and cannot publish a release. Use a current stable base library supporting Canvas 2D and Worker, compile, then preview on physical Android and iOS devices.
+Import **the `wechat/` directory** from the **Mini Program** entry in WeChat DevTools, not the Mini Game entry. `project.config.json` points to `miniprogram/` as its code root. Supply an **AppID registered for a regular Mini Program**, not a Mini Game AppID. The checked-in `touristappid` is only a local placeholder, subject to DevTools guest/test-account restrictions, and cannot publish a release. Use a current stable base library supporting Canvas 2D and Worker, compile, then preview on physical Android and iOS devices.
 
 Never add an AppSecret, upload private key, or identity documents to the repository. Local `project.private.config.json` is ignored by Git.
+
+## Missing `miniprogram/game.json` / environment reports `mg`
+
+DevTools is loading the project as a **Mini Game**. This repository supplies a regular Mini Program with `app.js` and `app.json`, so no `game.json` is expected.
+
+1. Close the project and re-import `wechat/` through the regular Mini Program entry.
+2. Ensure `project.config.json` uses `"compileType": "miniprogram"` and `"miniprogramRoot": "miniprogram/"`.
+3. Check local `project.private.config.json` for conflicting project-type or code-root fields. Correct only those fields; retain other local settings.
+4. Verify the AppID belongs to a regular Mini Program in the WeChat console. Choose a Mini Program test account, rather than a Mini Game test account, if testing locally.
+5. If account type and configuration are correct, clear DevTools cache and recompile. Re-import from a fresh project record if the old record retains Mini Game mode, keeping source files intact.
+
+`npm run check:wechat` now validates the checked-in and local configuration, but cannot infer account type from the AppID or change a cached DevTools session. Do not add an empty `game.json` or rename `app.json`: supporting the Mini Game runtime requires a separate migration.
 
 ## Features and behavior
 

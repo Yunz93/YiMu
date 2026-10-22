@@ -1,10 +1,18 @@
 {
   "description": "YiMu 一目 · 围棋学习小程序",
-  "projectname": "YiMu",
+  "projectname": "YiMu-MiniProgram",
   "appid": "touristappid",
   "compileType": "miniprogram",
   "miniprogramRoot": "miniprogram/",
-  "setting": {"es6": true, "enhance": true, "minified": true, "postcss": true, "urlCheck": true},
-  "packOptions": {"ignore": []},
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "minified": true,
+    "postcss": true,
+    "urlCheck": true
+  },
+  "packOptions": {
+    "ignore": []
+  },
   "condition": {}
 }

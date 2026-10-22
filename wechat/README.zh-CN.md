@@ -12,12 +12,26 @@
    npm test
    ```
 
-2. 安装微信开发者工具，选择「导入项目」，**目录选择本文件所在的 `wechat/`**，而非仓库根目录或 `dist/`。`project.config.json` 已将 `miniprogram/` 设置为代码目录。
-3. 使用你的小程序真实 **AppID** 导入；也可以修改 `project.config.json` 的 `appid`。仓库默认 `touristappid` 仅供工具允许范围内的本地查看，无法用于提交正式版本；测试号的功能限制以开发者工具提示为准。
+2. 安装微信开发者工具，选择「小程序」下的「导入项目」（不要选择「小游戏」），**目录选择本文件所在的 `wechat/`**，而非仓库根目录或 `dist/`。`project.config.json` 已将 `miniprogram/` 设置为代码目录。
+3. 使用**普通小程序账号**的真实 **AppID** 导入（小游戏 AppID 不适用于本工程）；也可以修改 `project.config.json` 的 `appid`。仓库默认 `touristappid` 仅供工具允许范围内的本地查看，无法用于提交正式版本；测试号的功能限制以开发者工具提示为准。
 4. 选择支持 Canvas 2D 和 Worker 的当前稳定基础库，编译后查看默认棋局页面。项目已开启增强编译。
 5. 用开发者工具的预览功能扫码，在安卓、iPhone 上检查触屏和 AI。代码无需服务器域名白名单，开发期间也不需要关闭域名校验。
 
 AppID 不是 AppSecret。**不要把 AppSecret、上传密钥或个人证件放进代码。** `project.private.config.json` 已被 Git 忽略。
+
+## 报错：找不到 `miniprogram/game.json`，环境显示 `mg`
+
+这表明开发者工具正在按**小游戏**加载。当前工程是普通小程序，入口是 `app.js`／`app.json`，没有 `game.json` 是正常的。
+
+1. 关闭当前项目，回到开发者工具项目列表，在「小程序」入口重新导入。目录选择 `wechat/`，此目录中应能看到 `project.config.json`。
+2. 确认该文件包含 `"compileType": "miniprogram"` 和 `"miniprogramRoot": "miniprogram/"`。
+3. 检查本地 `project.private.config.json`；若包含 `compileType: "game"` 或错误代码目录，修正对应字段。保留其他账号和工具设置，不需要删除整个文件。
+4. 确认使用的是**普通小程序 AppID**，而非小游戏 AppID。不确定时到公众平台确认账号类型；需要本地试运行时选择普通小程序测试号，而非小游戏测试号。
+5. 若配置和账号类型均正确，清除工具缓存并重新编译；如项目记录仍保留小游戏模式，移除工具中的旧项目记录后重新导入，**保留本地源文件**。
+
+运行 `npm run check:wechat` 会检查主配置、本地配置和入口路径，但无法从 AppID 字符串判断微信账号类型，也不能改变工具已缓存的导入模式。
+
+不要创建空的 `game.json`，也不要把 `app.json` 改名。小游戏的入口和页面运行方式不同，不能通过补一个配置文件转换。如果实际要发布为小游戏，需要另行迁移到小游戏运行环境。
 
 ## 功能
 
