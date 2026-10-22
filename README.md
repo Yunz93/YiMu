@@ -13,7 +13,7 @@ The application interface is currently in **Simplified Chinese**. Project docume
 ## Features
 
 - **Understand each move:** explanations of opening moves, extensions, connections, atari, and captures, plus the change in your estimated area. Inspect the AI's latest response as well.
-- **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. Clicking or tapping an intersection immediately plays the move, with no second confirmation. Hovering does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
+- **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. On a phone or tablet, hold an intersection for about 0.4 seconds to preview, keep holding and drag to inspect other points, then release to dismiss without playing. A floating summary stays visible during the hold. A quick click or tap still plays immediately, with no second confirmation. Hovering or holding does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
 - **Global board mode:** expand the complete board into a focused viewport, with live scores, turn status, board views, and game controls. The standard 19×19 board fits the available space without horizontal scrolling in this mode. Click **全局模式** above the board to enter; click **退出全局** or press Escape to leave. Games and AI thinking continue across mode changes.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
 - **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
@@ -67,7 +67,7 @@ Tests also verify non-mutating previews, 19×19 board edges, ko and seki lesson 
 ## Learning flow
 
 1. Start on 9×9, or select **19 路 · 标准棋盘** in game settings for the standard 361-intersection board. On small screens, the standard board scrolls horizontally inside its panel.
-2. Preview is on by default. Hover over an intersection to inspect a move; click or tap to play immediately, without a confirmation button. Move the mouse away or press Escape to dismiss a preview. Keyboard users can preview with arrow keys and play with Enter. Turn preview off at any time; the preference persists after refresh.
+2. Preview is on by default. Hover over an intersection to inspect a move; click or tap to play immediately, without a confirmation button. On touchscreens, hold for about 0.4 seconds to preview and drag while holding to change the point; release does not play a move. Swiping before the hold activates keeps normal page/board scrolling. Move the mouse away or press Escape to dismiss a desktop preview. Keyboard users can preview with arrow keys and play with Enter. Turn preview off at any time; the preference persists after refresh.
 3. Visit **规则入门** for the 16 categorized lessons. The original six lesson IDs are preserved, so existing completion progress remains valid.
 4. Use the liberties, influence, and territory views to explore the proposed position with mouse hover or keyboard arrows. Estimates remain heuristic and exclude any AI reply.
 
@@ -98,12 +98,14 @@ dist/
   app.js           Game state, lessons, interactions, persistence
   engine.js        Go rules, scoring, estimates, move explanations, pure previews
   lessons.js       16 interactive lesson definitions
+  touch-preview.js Long-press gestures and board coordinate mapping
   ai.js            AI search in a Web Worker
 scripts/
   build.mjs        Static deployment validation
 tests/
   engine.test.mjs  Rule and scoring tests
   learning.test.mjs Preview, 19×19, and lesson-position regression tests
+  touch-preview.test.mjs Tap, hold, drag, cancel, and coordinate regression tests
 docs/
   preview.png      Application screenshot
 vercel.json        Vercel deployment settings
