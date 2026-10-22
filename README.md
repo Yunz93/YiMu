@@ -12,7 +12,8 @@ The application interface is currently in **Simplified Chinese**. Project docume
 
 ## Features
 
-- **Understand each move:** explanations of opening moves, extensions, connections, atari, and captures, plus the change in your estimated area. Inspect the AI's latest response as well.
+- **Understand each move:** position-specific explanations distinguish escapes, strengthening, atari, liberty pressure, connections, cutting points, supporting moves, approaches, captures, and possible eye filling. Each explanation identifies affected groups by coordinate, compares liberties before and after, and flags immediate capture risks or groups left in atari. Existing saved games receive the updated explanations too.
+- **Know why a move is suggested:** **给我提示** opens a detailed recommendation with board evidence, tradeoffs, a legal opponent response considered during search, and other searched candidates. The suggestion remains in the coach card after closing the dialog. Move and preview details also explain what to watch next; opening the explanation never commits a move.
 - **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. On a phone or tablet, hold an intersection for about 0.4 seconds to preview, keep holding and drag to inspect other points, then release to dismiss without playing. A floating summary stays visible during the hold. A quick click or tap still plays immediately, with no second confirmation. Hovering or holding does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
 - **Global board mode:** expand the complete board into a focused viewport, with live scores, turn status, board views, and game controls. The standard 19×19 board fits the available space without horizontal scrolling in this mode. Click **全局模式** above the board to enter; click **退出全局** or press Escape to leave. Games and AI thinking continue across mode changes.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
@@ -83,7 +84,7 @@ During play, influence and area are heuristic estimates based on distance to bot
 
 The AI runs locally in a **Web Worker**, combining tactical candidate scoring, opponent-response search, and randomized simulations. Its three settings use different search budgets. It is a beginner practice companion, not a rated engine or a KataGo integration.
 
-Move explanations describe the resulting board shape; they do not expose an AI model's internal reasoning. Influence is not guaranteed territory. Complex life and death is not automatically adjudicated: mark confirmed dead groups yourself and continue play when uncertain. The scoring tool assumes the remaining stones are alive.
+Move explanations compare the actual groups and liberties before and after a move. Recommendation details also show a response and alternative candidates returned by the search, rather than a model's internal reasoning. Opponent-response examples respect positional superko, but are possibilities, not predictions or proof of optimal play. Influence is not guaranteed territory. Complex life and death is not automatically adjudicated: mark confirmed dead groups yourself and continue play when uncertain. The scoring tool assumes the remaining stones are alive.
 
 ## Privacy
 
@@ -105,6 +106,7 @@ scripts/
 tests/
   engine.test.mjs  Rule and scoring tests
   learning.test.mjs Preview, 19×19, and lesson-position regression tests
+  explanations.test.mjs Contextual explanations, tactical risks, ko-safe replies, search evidence
   touch-preview.test.mjs Tap, hold, drag, cancel, and coordinate regression tests
 docs/
   preview.png      Application screenshot
