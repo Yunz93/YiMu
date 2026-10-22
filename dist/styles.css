@@ -113,3 +113,32 @@ body.board-global-mode{overflow:hidden}
 .analysis-board{max-width:480px}
 .board-global-mode .move-preview{height:76px;grid-template-rows:34px 20px;row-gap:3px}
 .board-global-mode .move-preview .preview-explanation{display:block;grid-column:1/-1;font-size:9px;line-height:20px;white-space:nowrap;overflow:auto}
+
+.learning-overview .stats-grid{margin:18px 0 14px}
+.learning-overview .stat-box strong{font-variant-numeric:tabular-nums}
+.learning-progress-label{display:flex;justify-content:space-between;font-size:10px;color:#839477;margin-bottom:7px}
+.learning-progress-label b{font-variant-numeric:tabular-nums}
+.learning-progress{height:5px;overflow:hidden;border-radius:4px;background:#e5ecde}
+.learning-progress i{display:block;height:100%;background:#799d65;border-radius:inherit}
+.learning-resume{display:flex;align-items:center;justify-content:space-between;gap:14px;background:#f0f5e9;border:1px solid #dfe8d6;border-radius:8px;padding:14px;margin-top:18px}
+.learning-resume>div{min-width:0}
+.learning-resume span{font-size:10px;color:#879974}
+.learning-resume h3{margin:6px 0 0}
+.learning-resume .button{flex-shrink:0}
+.learning-filter-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:14px 0;color:#8a997c;font-size:10px}
+.learning-filter-row label{display:flex;align-items:center;gap:9px}
+.learning-filter-row select{max-width:140px}
+.learning-course-meta{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px;font-size:9px;color:#8fa07c}
+.lesson-status{white-space:nowrap;color:#7b925f}
+.lesson-option .lesson-action{display:block;margin-top:12px;font-size:10px;color:#698551}
+.learning-empty{text-align:center;border:1px dashed #dbe4d2;border-radius:8px;padding:24px 14px}
+.learning-empty[hidden]{display:none}
+#modal-content .learning-storage-note{font-size:10px;margin-top:22px;color:#9aa58f}
+@media(max-width:420px){
+ .learning-overview .stat-box{padding:16px 5px}
+ .learning-overview .stat-box strong{font-size:22px}
+ .learning-resume{align-items:flex-start;flex-direction:column;gap:12px}
+ .learning-resume .button{width:100%}
+ .learning-filter-row{gap:8px}
+ .lesson-grid{grid-template-columns:1fr}
+}

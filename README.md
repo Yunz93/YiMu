@@ -18,7 +18,7 @@ The application interface is currently in **Simplified Chinese**. Project docume
 - **Global board mode:** expand the complete board into a focused viewport, with live scores, turn status, board views, and game controls. The standard 19×19 board fits the available space without horizontal scrolling in this mode. Click **全局模式** above the board to enter; click **退出全局** or press Escape to leave. Games and AI thinking continue across mode changes.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
 - **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
-- **Learn by doing:** 16 interactive lessons covering basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
+- **One learning center:** **学习中心** combines the 16 interactive lessons and learning progress in one place. See completed courses, moves played, and finished games; resume the first unfinished lesson; filter by topic and completion status. Returning from a lesson keeps the selected filters. Courses cover basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
 - **Understand the score:** Chinese area scoring with 7.5 points of komi for White, a separate unsettled-area indicator, and manual dead-group marking at the end. Resume play to resolve disputed life and death.
 - **Pick up where you left off:** games and learning progress are saved in the current browser using `localStorage`.
 - **Responsive and lightweight:** native HTML, CSS, and JavaScript modules with no runtime npm dependencies, backend, database, or AI API key.
@@ -69,7 +69,7 @@ Tests also verify non-mutating previews, 19×19 board edges, ko and seki lesson 
 
 1. Start on 9×9, or select **19 路 · 标准棋盘** in game settings for the standard 361-intersection board. On small screens, the standard board scrolls horizontally inside its panel.
 2. Preview is on by default. Hover over an intersection to inspect a move; click or tap to play immediately, without a confirmation button. On touchscreens, hold for about 0.4 seconds to preview and drag while holding to change the point; release does not play a move. Swiping before the hold activates keeps normal page/board scrolling. Move the mouse away or press Escape to dismiss a desktop preview. Keyboard users can preview with arrow keys and play with Enter. Turn preview off at any time; the preference persists after refresh.
-3. Visit **规则入门** for the 16 categorized lessons. The original six lesson IDs are preserved, so existing completion progress remains valid.
+3. Visit **学习中心** for the 16 categorized lessons, progress, and the next unfinished lesson. Filter by topic and completion status, or replay a completed course. The original lesson IDs and browser storage are unchanged, so existing progress is preserved.
 4. Use the liberties, influence, and territory views to explore the proposed position with mouse hover or keyboard arrows. Estimates remain heuristic and exclude any AI reply.
 
 ## Rules and scoring
