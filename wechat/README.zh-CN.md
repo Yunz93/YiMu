@@ -21,6 +21,8 @@ AppID 不是 AppSecret。**不要把 AppSecret、上传密钥或个人证件放�
 
 ## 报错：找不到 `miniprogram/game.json`，环境显示 `mg`
 
+本仓库现已提供可用于小游戏 AppID 的[小游戏工程 `wechat-game/`](../wechat-game/README.zh-CN.md)。如果你的账号是小游戏，请直接导入该目录。
+
 这表明开发者工具正在按**小游戏**加载。当前工程是普通小程序，入口是 `app.js`／`app.json`，没有 `game.json` 是正常的。
 
 1. 关闭当前项目，回到开发者工具项目列表，在「小程序」入口重新导入。目录选择 `wechat/`，此目录中应能看到 `project.config.json`。
@@ -31,7 +33,7 @@ AppID 不是 AppSecret。**不要把 AppSecret、上传密钥或个人证件放�
 
 运行 `npm run check:wechat` 会检查主配置、本地配置和入口路径，但无法从 AppID 字符串判断微信账号类型，也不能改变工具已缓存的导入模式。
 
-不要创建空的 `game.json`，也不要把 `app.json` 改名。小游戏的入口和页面运行方式不同，不能通过补一个配置文件转换。如果实际要发布为小游戏，需要另行迁移到小游戏运行环境。
+不要创建空的 `game.json`，也不要把 `app.json` 改名。小游戏的入口和页面运行方式不同，不能通过补一个配置文件转换。如果实际要发布为小游戏，请使用已提供的 `wechat-game/` 工程。
 
 ## 功能
 

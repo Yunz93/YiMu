@@ -1,6 +1,6 @@
 {
   "name": "yimu",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "description": "YiMu — an interactive Go learning website with move explanations, board visualizations, and a browser-based AI companion.",
   "private": true,
   "type": "module",
@@ -17,6 +17,8 @@
     "build": "node scripts/build.mjs",
     "test": "node --test tests/*.test.mjs",
     "build:wechat": "node scripts/build-wechat.mjs",
-    "check:wechat": "node scripts/build-wechat.mjs --check"
+    "check:wechat": "node scripts/build-wechat.mjs --check",
+    "build:wechat-game": "node scripts/build-wechat-game.mjs",
+    "check:wechat-game": "node scripts/build-wechat-game.mjs --check"
   }
 }

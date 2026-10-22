@@ -1,0 +1,10 @@
+{
+  "description":"YiMu 一目 · 围棋学习小游戏",
+  "projectname":"YiMu-MiniGame",
+  "appid":"touristappid",
+  "compileType":"game",
+  "miniprogramRoot":"./",
+  "setting":{"es6":true,"enhance":true,"minified":true,"urlCheck":true},
+  "packOptions":{"ignore":[{"type":"file","value":"README.md"},{"type":"file","value":"README.zh-CN.md"},{"type":"file","value":"package.json"}]},
+  "condition":{}
+}

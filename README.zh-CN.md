@@ -23,6 +23,10 @@ YiMu 是一个面向围棋初学者的交互式学习网站。如果你一直弄
 - **自动保存进度**：棋局、落子次数、已完成课程和完成棋局数保存在当前浏览器的 `localStorage` 中。
 - **轻量且适配手机**：原生 HTML、CSS、JavaScript 模块，无运行时 npm 依赖，不需要后端、数据库或 AI API Key。
 
+## 微信小游戏版（小游戏 AppID）
+
+使用小游戏 AppID、开发者工具环境显示 `mg` 时，请导入 **[`wechat-game/`](wechat-game/README.zh-CN.md)**。该版本有独立的 `game.js`／`game.json` 和 Canvas 界面，支持对局、长按预览、本地 AI、推荐讲解、统一学习中心与全部 16 节课程。运行 `npm run build:wechat-game` 同步共用逻辑；下载的独立压缩包可直接导入，无需构建。详见[小游戏导入与验收说明](wechat-game/README.zh-CN.md)。
+
 ## 微信小程序版
 
 仓库新增原生小程序版本 [`wechat/`](wechat/README.zh-CN.md)，包含 Canvas 棋盘、微信 Worker 本地 AI、长按预览、全部 16 节互动课和统一学习中心。运行 `npm run build:wechat` 后，将 **`wechat/` 目录**导入微信开发者工具并使用真实 AppID。详见[导入、隐私与上线说明](wechat/README.zh-CN.md)。备案、服务类目确认、真机测试和微信上传审核需单独完成，GitHub／Vercel 发布不会代替小程序发布。

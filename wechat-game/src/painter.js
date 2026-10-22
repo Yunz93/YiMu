@@ -1,0 +1,16 @@
+const COLORS={bg:'#f7f8f5',paper:'#ffffff',ink:'#29362e',muted:'#8b9782',green:'#426650',sage:'#edf3e7',border:'#e1e8d9',risk:'#a16f4e'};
+class Painter{
+ constructor(context){this.ctx=context;this.hits=[];this.offset=0;this.clipTop=0;this.clipBottom=Infinity;this.cache=new Map();}
+ begin(width,height){const c=this.ctx;c.clearRect(0,0,width,height);c.fillStyle=COLORS.bg;c.fillRect(0,0,width,height);this.hits=[];this.offset=0;this.clipTop=0;this.clipBottom=height;}
+ card(x,y,w,h,fill=COLORS.paper,stroke=COLORS.border,r=12){const c=this.ctx;r=Math.max(0,Math.min(r,w/2,h/2));c.beginPath();c.moveTo(x+r,y);c.lineTo(x+w-r,y);c.quadraticCurveTo(x+w,y,x+w,y+r);c.lineTo(x+w,y+h-r);c.quadraticCurveTo(x+w,y+h,x+w-r,y+h);c.lineTo(x+r,y+h);c.quadraticCurveTo(x,y+h,x,y+h-r);c.lineTo(x,y+r);c.quadraticCurveTo(x,y,x+r,y);c.closePath();if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.strokeStyle=stroke;c.lineWidth=1;c.stroke();}}
+ text(value,x,y,size=14,color=COLORS.ink,weight='normal',align='left'){const c=this.ctx;c.font=`${weight} ${size}px sans-serif`;c.fillStyle=color;c.textBaseline='top';c.textAlign=align;c.fillText(String(value??''),x,y);}
+ lines(value,width,size=14){const text=String(value??''),key=size+'|'+width+'|'+text;if(this.cache.has(key))return this.cache.get(key);const c=this.ctx;c.font=`normal ${size}px sans-serif`;const lines=[];for(const paragraph of text.split('\n')){let line='';for(const char of Array.from(paragraph)){if(line&&c.measureText(line+char).width>width){lines.push(line);line=char;}else line+=char;}lines.push(line);}if(this.cache.size>800)this.cache.clear();this.cache.set(key,lines);return lines;}
+ paragraph(value,x,y,width,{size=14,lineHeight=22,color=COLORS.muted,maxLines=Infinity}={}){const all=this.lines(value,width,size),lines=all.slice(0,maxLines);lines.forEach((line,i)=>this.text(i===lines.length-1&&all.length>maxLines?line.slice(0,-1)+'…':line,x,y+i*lineHeight,size,color));return lines.length*lineHeight;}
+ button(id,label,x,y,w,h,action,{primary=false,disabled=false,selected=false,danger=false}={}){const fill=primary||selected?COLORS.green:danger?'#fbf2e8':COLORS.sage;const c=this.ctx;c.save();if(disabled)c.globalAlpha=.4;this.card(x,y,w,h,fill,null,8);const size=w<65?11:13;this.text(label,x+w/2,y+(h-size)/2,size,primary||selected?'#fff':danger?COLORS.risk:COLORS.green,'normal','center');c.restore();if(!disabled)this.hit(id,x,y,w,h,action);}
+ hit(id,x,y,w,h,action){const top=Math.max(y+this.offset,this.clipTop),bottom=Math.min(y+h+this.offset,this.clipBottom);if(bottom>top)this.hits.push({id,x,y:top,w,h:bottom-top,action});}
+ startScroll(top,bottom,scroll){const c=this.ctx;c.save();c.beginPath();c.rect(0,top,10000,bottom-top);c.clip();c.translate(0,top-scroll);this.offset=top-scroll;this.clipTop=top;this.clipBottom=bottom;}
+ endScroll(height){this.ctx.restore();this.offset=0;this.clipTop=0;this.clipBottom=height;}
+ circle(x,y,r,fill,stroke,width=1){const c=this.ctx;c.beginPath();c.arc(x,y,r,0,Math.PI*2);if(fill){c.fillStyle=fill;c.fill();}if(stroke){c.lineWidth=width;c.strokeStyle=stroke;c.stroke();}}
+ rule(x,y,width){const c=this.ctx;c.beginPath();c.moveTo(x,y);c.lineTo(x+width,y);c.strokeStyle=COLORS.border;c.lineWidth=1;c.stroke();}
+}
+module.exports={Painter,COLORS};
