@@ -24,6 +24,14 @@ npm run check:wechat-game
 npm test
 ```
 
+## Interface preview · 1.5.1
+
+The Mini Game follows the website’s cream, sage-green, and wood palette. Players, live estimates, the preview switch, and game actions share a board card; subtle segmented views and icon navigation replace large filled controls. The learning center adds lesson-board illustrations, and settings/explanation sheets size to their content.
+
+<p><img src="../docs/minigame-game.png" width="280" alt="Mini Game board card, live estimates, and icon navigation" /> <img src="../docs/minigame-learning.png" width="280" alt="Learning progress, resume card, and lesson illustrations" /></p>
+
+These images use the actual application Canvas renderer with a simulated platform; they are not physical WeChat screenshots. Single-tap play, optional hold previews, AI, scoring, and all lessons retain their behavior.
+
 ## Features
 
 - Native Canvas scenes for the game, unified learning center, all 16 interactive lessons, settings, explanations, and About/privacy.

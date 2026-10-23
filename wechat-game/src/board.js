@@ -1,7 +1,9 @@
 // All geometry uses the same 560-unit grid as the website and native Mini Program.
 function drawBoard(p,x,y,size,{n,board,last=-1,previewAt=-1,hintAt=-1,captured=[],liberties=[],groupStones=[],inf=[],owners=[],selected=[],dead=[]}){
  const c=p.ctx,step=476/(n-1),r=step*.435,at=i=>[42+i%n*step,42+Math.floor(i/n)*step];
- c.save();c.translate(x,y);c.scale(size/560,size/560);p.card(0,0,560,560,'#e8c894','#d5b47c',8);
+ c.save();c.translate(x,y);c.scale(size/560,size/560);const wood=c.createLinearGradient(0,0,560,560);wood.addColorStop(0,'#ead09f');wood.addColorStop(.5,'#e7c58e');wood.addColorStop(1,'#eacf9b');p.card(0,0,560,560,wood,'#d5b47c',8);
+ // Fixed, low-contrast grain is cheap to draw and never changes between moves.
+ c.save();c.beginPath();c.rect(1,1,558,558);c.clip();c.lineWidth=.6;for(let k=6;k<560;k+=9){c.strokeStyle=k%3?'rgba(151,111,55,.035)':'rgba(255,246,215,.10)';c.beginPath();c.moveTo(0,k);c.quadraticCurveTo(280,k+4,560,k-3);c.stroke();}c.restore();
  for(let i=0;i<n*n;i++)if(!board[i]){const [a,b]=at(i),v=inf[i];if(Math.abs(v)>.06){c.fillStyle=v>0?`rgba(66,107,69,${Math.abs(v)*.48})`:`rgba(255,253,240,${Math.abs(v)*.6})`;c.fillRect(a-step*.48,b-step*.48,step*.96,step*.96);}}
  c.strokeStyle='#997b47';c.lineWidth=.9;for(let k=0;k<n;k++){const q=42+k*step;c.beginPath();c.moveTo(42,q);c.lineTo(518,q);c.moveTo(q,42);c.lineTo(q,518);c.stroke();p.text('ABCDEFGHJKLMNOPQRST'[k],q,16,11,'#897047','normal','center');p.text(n-k,22,q-6,11,'#897047','normal','center');p.text('ABCDEFGHJKLMNOPQRST'[k],q,534,11,'#897047','normal','center');}
  const stars=n===19?[3,9,15]:n===13?[3,6,9]:n===9?[2,4,6]:n===5?[2]:[];for(const a of stars)for(const b of stars){if(n!==19&&stars.length===3&&((a===stars[1])!==(b===stars[1])))continue;p.circle(42+a*step,42+b*step,2.5,'#8d7248');}

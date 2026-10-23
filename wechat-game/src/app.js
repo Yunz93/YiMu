@@ -28,18 +28,30 @@ class YiMuGame{
  }
  stats(){return Store.stats();}
  resize(){this.cancelTouch();const info=this.api.getWindowInfo?this.api.getWindowInfo():this.api.getSystemInfoSync();this.width=Math.max(240,info.windowWidth||info.screenWidth||375);this.height=Math.max(360,info.windowHeight||info.screenHeight||667);const safe=info.safeArea||{};this.safeBottom=Math.max(0,this.height-(safe.bottom||this.height));let menu={};try{if(this.api.getMenuButtonBoundingClientRect)menu=this.api.getMenuButtonBoundingClientRect();}catch{}
-  this.headerTop=Math.max(safe.top||0,menu.bottom||((safe.top||0)+32))+10;this.headerTop=Math.min(this.headerTop,this.height/4);const bottom=this.height-this.safeBottom-(this.globalMode&&this.screen==='game'?10:58);const headerHeight=this.globalMode&&this.screen==='game'?40:54;this.viewport={top:this.headerTop+headerHeight,bottom,height:bottom-this.headerTop-headerHeight};
+  this.headerTop=Math.max(safe.top||0,menu.bottom||((safe.top||0)+32))+10;this.headerTop=Math.min(this.headerTop,this.height/4);const bottom=this.height-this.safeBottom-(this.globalMode&&this.screen==='game'?10:62);const headerHeight=this.globalMode&&this.screen==='game'?36:38;this.viewport={top:this.headerTop+headerHeight,bottom,height:bottom-this.headerTop-headerHeight};
   const dpr=Math.min(3,Math.max(1,info.pixelRatio||1));this.canvas.width=Math.round(this.width*dpr);this.canvas.height=Math.round(this.height*dpr);this.context.scale(dpr,dpr);this.render();
  }
  invalidate(){if(!this.active||this.destroyed||this.frame!==undefined)return;this.frame=this.requestFrame(()=>{this.frame=undefined;this.render();});}
  render(){if(!this.active||!this.viewport||this.destroyed)return;const p=this.painter,w=this.width,h=this.height;p.begin(w,h);this.boardRect=null;
   p.startScroll(this.viewport.top,this.viewport.bottom,this.scroll[this.screen]);const fn={game:Views.gameView,learn:Views.learnView,lesson:Views.lessonView,about:Views.aboutView}[this.screen];const contentHeight=fn(this,p,w);p.endScroll(h);
   this.maxScroll[this.screen]=Math.max(0,contentHeight-this.viewport.height);if(this.scroll[this.screen]>this.maxScroll[this.screen]){this.scroll[this.screen]=this.maxScroll[this.screen];this.render();return;}
-  p.ctx.fillStyle=C.bg;p.ctx.fillRect(0,0,w,this.viewport.top);const title={game:this.globalMode?'一目 · 专注棋盘':'YiMu · 一目',learn:'学习中心',lesson:'互动课程 · '+String(this.lesson?this.lesson.index+1:1).padStart(2,'0'),about:'关于一目'}[this.screen];p.text(title,16,this.headerTop+2,22,C.ink,'600');if(!(this.globalMode&&this.screen==='game'))p.text(this.screen==='game'?'每一手，都看得懂。':'不必急着赢，先看懂这一手。',16,this.headerTop+32,11,C.muted);
-  if(this.screen==='game')p.button('global-mode',this.globalMode?'退出全局':'全局模式',w-104,this.headerTop+5,88,33,()=>this.toggleGlobal());
-  else if(this.screen==='lesson')p.button('header-learning','学习中心',w-104,this.headerTop+5,88,33,()=>this.navigate('learn'));
-  else p.button('share','分享',w-79,this.headerTop+5,63,33,()=>this.share());
-  if(!(this.globalMode&&this.screen==='game')){const y=h-this.safeBottom-54;p.ctx.fillStyle='#fff';p.ctx.fillRect(0,y,w,54+this.safeBottom);p.rule(0,y,w);const tabw=(w-24)/3;[['game','学习棋局'],['learn','学习中心'],['about','关于一目']].forEach(([id,label],i)=>p.button('nav-'+id,label,8+i*(tabw+4),y+9,tabw,35,()=>this.navigate(id),{selected:this.screen===id||this.screen==='lesson'&&id==='learn'}));}
+  p.ctx.fillStyle=C.bg;p.ctx.fillRect(0,0,w,this.viewport.top);
+  // Use the free space to the left of WeChat's capsule for the brand.
+  const by=Math.max(8,this.headerTop-38);p.brand(16,by,30);
+  const title={game:this.globalMode?'一目 · 专注棋盘':'YiMu · 一目',learn:'学习中心',lesson:'互动课程 · '+String(this.lesson?this.lesson.index+1:1).padStart(2,'0'),about:'关于一目'}[this.screen];
+  p.text(title,56,by+2,this.screen==='game'?19:18,C.ink,'600');p.text('Y I M U   G O',57,by+24,7,C.muted);
+  p.text(this.screen==='game'?'每一手，都看得懂。':'慢慢来，每一步都算数。',16,this.headerTop+10,12,C.muted);
+  if(this.screen==='game'&&!this.globalMode&&w>=320){p.circle(w-174,this.headerTop+16,2,this.saved?'#8eaa78':C.risk);p.text(this.saved?'本机存档':'未保存',w-166,this.headerTop+11,9,this.saved?C.muted:C.risk);}
+  if(this.screen==='game')p.button('global-mode',this.globalMode?'退出全局':'全局模式',w-103,this.headerTop,91,34,()=>this.toggleGlobal(),{quiet:true,icon:this.globalMode?'shrink':'expand'});
+  else if(this.screen==='lesson')p.button('header-learning','学习中心',w-103,this.headerTop,91,34,()=>this.navigate('learn'),{quiet:true,icon:'book'});
+  else p.button('share','分享',w-77,this.headerTop,65,34,()=>this.share(),{quiet:true,icon:'arrow'});
+  if(!(this.globalMode&&this.screen==='game')){
+   const y=h-this.safeBottom-58;p.ctx.fillStyle='#ffffff';p.ctx.fillRect(0,y,w,58+this.safeBottom);p.rule(0,y,w);const tabw=w/3;
+   [['game','学习棋局','grid'],['learn','学习中心','book'],['about','关于一目','info']].forEach(([id,label,icon],i)=>{
+    const selected=this.screen===id||this.screen==='lesson'&&id==='learn',cx=tabw*(i+.5),color=selected?C.green:'#9aa492';
+    if(selected)p.card(cx-24,y+5,48,26,C.sage,null,9);p.icon(icon,cx-9,y+9,18,color);p.text(label,cx,y+36,10,color,selected?'600':'normal','center');p.hit('nav-'+id,i*tabw,y,tabw,58,()=>this.navigate(id));
+   });
+  }
   const max=this.maxScroll[this.screen];if(max>0&&!this.modal){const th=Math.max(28,this.viewport.height*this.viewport.height/(contentHeight||1)),ty=this.viewport.top+(this.viewport.height-th)*this.scroll[this.screen]/max;p.card(w-4,ty,2,th,'#b9c9ad',null,1);}
   if(this.preview)Views.previewView(this,p,w);if(this.modal)Views.modalView(this,p,w,h);
  }
