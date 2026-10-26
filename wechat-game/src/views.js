@@ -3,41 +3,56 @@ const {lessons}=require('../shared/lessons');
 const {category}=require('../utils/format');
 const {drawBoard}=require('./board');
 const {COLORS:C}=require('./painter');
-const margin=16;
+// Fullscreen uses the whole safe viewport, with controls anchored at its bottom.
+function fullscreenView(a,p,w){
+ const d=a.snapshot(),s=a.session.state,h=a.viewport.height,scoreH=36,dockH=80,dockY=h-dockH;
+ const size=Math.min(w,Math.max(1,dockY-scoreH-8)),bx=(w-size)/2,by=scoreH+4+(dockY-scoreH-8-size)/2;
+ p.stone(18,18,8,1);p.text(d.score.black,34,5,w<320?18:22,C.ink,'600');
+ p.stone(w-18,18,8,2);p.text(d.score.white+s.komi,w-34,5,w<320?18:22,'#91a080','600','right');
+ p.text(d.turn,w/2,4,10,C.green,'normal','center');p.text(d.scoreLabel+' · 白贴 7.5',w/2,21,9,C.muted,'normal','center');
+ p.hit('score-analysis',8,0,w-16,scoreH,()=>a.showAnalysis());
+ if(a.aiError){p.card(w/2-62,0,124,scoreH,'#fbf2e8',null,6);p.text('AI 未完成 · 点此重试',w/2,13,10,C.risk,'normal','center');p.hit('retry-ai',w/2-62,0,124,scoreH,()=>a.askAI(s.turn===s.human));}
+ drawBoard(p,bx,by,size,d.board);a.boardRect={x:bx,y:by+p.offset,size,n:s.n,kind:'game'};
+ p.ctx.fillStyle=C.paper;p.ctx.fillRect(0,dockY,w,dockH);p.rule(0,dockY,w);
+ const tw=w-108;p.card(8,dockY+3,tw,32,'#f1f4ed',null,6);
+ ['棋盘','气','势力','地盘'].forEach((label,i)=>{const id=['normal','liberties','influence','territory'][i],bw=(tw-6)/4,x=11+i*bw;if(a.view===id)p.card(x,dockY+6,bw,26,C.paper,null,4);p.text(label,x+bw/2,dockY+13,10,a.view===id?C.green:C.muted,a.view===id?'600':'normal','center');p.hit('view-'+id,x,dockY,bw,36,()=>{a.view=id;a.render();});});
+ p.toggle('preview-toggle','预览',w-92,dockY+1,84,a.previewEnabled,()=>a.togglePreview(),a.busy||s.ended);
+ const actions=[['undo','悔一手','undo',()=>a.undo(),!s.moves.length||s.scored],['hint','给我提示','bulb',()=>a.askAI(true),a.busy||s.ended],['pass',s.ended?'继续对弈':'停一手','pause',()=>a.pass(),a.busy||s.scored],['finish',s.scored?'开启新局':s.ended?'确认结果':'结束数子','flag',()=>a.finish(),a.busy]];
+ actions.forEach(([id,label,icon,fn,disabled],i)=>p.button(id,label,i*w/4,dockY+36,w/4,44,fn,{quiet:true,icon,disabled}));
+ return h;
+}
 // The board and its controls share one quiet surface, as on the web edition.
 function gameView(a,p,w){
- const d=a.snapshot(),s=a.session.state,x=12,cw=w-24,ix=x+12,iw=cw-24,global=a.globalMode;
+ if(a.globalMode)return fullscreenView(a,p,w);
+ const d=a.snapshot(),s=a.session.state,x=12,cw=w-24,ix=x+12,iw=cw-24;
  let y=6;
- const size=global?Math.max(80,Math.min(cw,a.viewport.height-210)):iw;
- const panelHeight=global?0:148+size+96;
- if(!global)p.card(x,y,cw,panelHeight);
- if(!global){
+ const size=iw;
+ const panelHeight=148+size+96;
+ p.card(x,y,cw,panelHeight);
+ {
   p.text('边下边学',ix,y+14,13,C.ink,'600');p.card(ix+65,y+12,49,19,C.sage,null,4);p.text(s.n+' 路棋盘',ix+89.5,y+16,9,C.green,'normal','center');
   p.button('new','新局',w-153,y+3,66,36,()=>a.openSettings(true),{quiet:true,icon:'plus'});
   p.button('settings','设置',w-85,y+3,61,36,()=>a.openSettings(false),{quiet:true,icon:'settings'});
   y+=44;
  }
- const sy=y;
- if(global)p.card(x,y,cw,60);
  // The estimated points stay alongside each player; the center is reserved for turn state.
  p.stone(ix+10,y+15,10,1);p.text(s.human===1?'你 · 执黑':'一目 AI · 黑',ix+27,y+2,11,C.ink,'600');p.text(d.score.black,ix+27,y+21,24,C.ink,'600');
  p.stone(w-ix-10,y+15,10,2);p.text(s.human===2?'你 · 执白':'一目 AI · 白',w-ix-27,y+2,11,C.ink,'600','right');p.text(d.score.white+s.komi,w-ix-27,y+21,24,'#91a080','600','right');
  p.text(d.scoreLabel,w/2,y+5,9,C.muted,'normal','center');p.circle(w/2-p.ctx.measureText(d.turn).width/2-5,y+29,2.3,'#89a675');p.text(d.turn,w/2,y+23,10,C.green,'normal','center');
  p.hit('score-analysis',ix,y,iw,52,()=>a.showAnalysis());y+=56;
- if(!global){
+ {
   const total=s.n*s.n,track=iw,black=Math.min(total,d.score.black),white=Math.min(total-black,d.score.white);
   p.card(ix,y,track,3,'#e7ebe2',null,1);if(black)p.card(ix,y,track*black/total,3,'#69805b',null,1);if(white)p.card(ix+track-track*white/total,y,track*white/total,3,'#c4d1b3',null,1);
   y+=10;p.toggle('preview-toggle','落子前预览',ix,y,128,a.previewEnabled,()=>a.togglePreview(),a.busy||s.ended);p.text('轻点落子 · 长按试落',w-ix,y+11,9,C.muted,'normal','right');y+=38;
- }else y=sy+70;
+ }
  const bx=(w-size)/2;drawBoard(p,bx,y,size,d.board);a.boardRect={x:bx,y:y+p.offset,size,n:s.n,kind:'game'};y+=size+8;
- const tabsX=global?x:ix;
+ const tabsX=ix;
  p.icon('eye',tabsX,y+10,14,C.muted);p.text('看懂棋盘',tabsX+20,y+11,10,C.muted);
- const tx=tabsX+96,tw=(global?cw:iw)-96;
+ const tx=tabsX+96,tw=iw-96;
  p.card(tx,y+2,tw,32,'#f1f4ed',null,6);
  ['棋盘','气','势力','地盘'].forEach((label,i)=>{const id=['normal','liberties','influence','territory'][i],bw=(tw-6)/4,bx=tx+3+i*bw;if(a.view===id)p.card(bx,y+5,bw,26,C.paper,null,4);p.text(label,bx+bw/2,y+12,10,a.view===id?C.green:C.muted,a.view===id?'600':'normal','center');p.hit('view-'+id,bx,y,bw,38,()=>{a.view=id;a.render();});});y+=42;
  const actions=[['undo','悔一手','undo',()=>a.undo(),!s.moves.length||s.scored],['hint','给我提示','bulb',()=>a.askAI(true),a.busy||s.ended],['pass',s.ended?'继续对弈':'停一手','pause',()=>a.pass(),a.busy||s.scored],['finish',s.scored?'开启新局':s.ended?'确认结果':'结束数子','flag',()=>a.finish(),a.busy]];
- const ax=global?x:ix,aw=global?cw:iw;p.rule(ax,y,aw);actions.forEach(([id,label,icon,fn,disabled],i)=>p.button(id,label,ax+i*aw/4,y+2,aw/4,42,fn,{quiet:true,icon,disabled}));y+=48;
- if(global){p.toggle('preview-toggle','试落预览',x,y,115,a.previewEnabled,()=>a.togglePreview(),a.busy||s.ended);p.text(s.n+' 路 · 点比分看讲解',w-12,y+11,10,C.muted,'normal','right');return y+36;}
+ const ax=ix,aw=iw;p.rule(ax,y,aw);actions.forEach(([id,label,icon,fn,disabled],i)=>p.button(id,label,ax+i*aw/4,y+2,aw/4,42,fn,{quiet:true,icon,disabled}));y+=48;
  // Keep card height tied to its contents, with the coach immediately after it.
  y=6+panelHeight+12;
  if(a.aiError){const h=p.lines(a.aiError,cw-24,12).length*19+54;p.card(x,y,cw,h,'#fbf2e8',null);p.paragraph(a.aiError,x+12,y+10,cw-24,{size:12,lineHeight:19,color:C.risk});p.button('retry-ai','重试 AI',x+12,y+h-36,cw-24,28,()=>a.askAI(s.turn===s.human));y+=h+12;}
@@ -103,7 +118,6 @@ function aboutView(a,p,w){
  p.text('让每一手，都看得懂。',x,y,22,C.ink,'600');y+=37;p.text('YiMu · 一目小游戏 '+a.config.version,x,y,12,C.muted);y+=32;
  const sections=[['关于一目','互动课程、落子讲解、局面预览和本地 AI 陪练，帮助初学者理解围棋。AI 棋力未经段级位评定，复杂死活需要继续验证。'],['隐私与本机数据','本版本无需登录。棋局、课程完成记录、累计统计、预览设置保存在当前设备的微信小游戏存储中，不会自动同步到网页版、普通小程序或其他设备。'],['本地计算','应用代码不向自建服务器或外部 AI 服务上传棋局，未接入广告、统计 SDK 或网络字体。窗口尺寸、像素比和安全区域仅在本地用于适配界面。'],['分享与清除','分享只携带首页或课程入口，不包含棋局、身份或学习记录。清理小游戏存储、更换设备可能丢失进度；下方可主动清除本机记录。']];
  for(const [title,text] of sections){p.text(title,x,y,16,C.ink,'600');y+=29;y+=p.paragraph(text,x,y,cw,{size:13,lineHeight:22})+24;}
- p.button('copy-website','复制网页版地址',x,y,cw,37,()=>a.copy(a.config.website));y+=48;p.button('copy-repository','复制开源项目地址',x,y,cw,37,()=>a.copy(a.config.repository));y+=48;
  if(a.config.contact)y+=p.paragraph('反馈联系方式：'+a.config.contact,x,y,cw,{size:13,lineHeight:22})+18;
  if(a.config.filingNumber)y+=p.paragraph('备案号：'+a.config.filingNumber,x,y,cw,{size:12,lineHeight:20})+18;
  p.button('clear-data','清除本机棋局与学习记录',x,y,cw,37,()=>a.clearData(),{danger:true});return y+60;

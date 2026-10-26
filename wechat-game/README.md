@@ -24,7 +24,7 @@ npm run check:wechat-game
 npm test
 ```
 
-## Interface preview · 1.5.1
+## Interface preview · 1.5.2
 
 The Mini Game follows the website’s cream, sage-green, and wood palette. Players, live estimates, the preview switch, and game actions share a board card; subtle segmented views and icon navigation replace large filled controls. The learning center adds lesson-board illustrations, and settings/explanation sheets size to their content.
 
@@ -32,17 +32,21 @@ The Mini Game follows the website’s cream, sage-green, and wood palette. Playe
 
 These images use the actual application Canvas renderer with a simulated platform; they are not physical WeChat screenshots. Single-tap play, optional hold previews, AI, scoring, and all lessons retain their behavior.
 
+Fullscreen hides the brand and slogan, compacts scores into one row, maximizes the square board within the available width/height, and anchors controls above the bottom safe area. A 320×568 viewport fits a 320px board without scrolling. The system capsule and safe areas remain clear. About no longer contains website/repository links; privacy information and local-data deletion remain available.
+
+<img src="../docs/minigame-fullscreen.png" width="280" alt="Fullscreen Mini Game with a screen-width board, compact scores, and bottom controls" />
+
 ## Features
 
 - Native Canvas scenes for the game, unified learning center, all 16 interactive lessons, settings, explanations, and About/privacy.
 - 9×9, 13×13, and 19×19; Black/White choice; three local AI search settings in a Mini Game Worker.
 - Tap once to play; hold for 0.4 seconds to preview, drag to inspect another point, release without playing. Swipes before activation scroll the scene. Multitouch/system cancellation never commits a move.
-- Liberties, influence, territory estimates, and a global board mode. Main game controls remain in global mode; exit it for settings/new-game controls.
+- Liberties, influence, territory estimates, and a fullscreen board mode. Main game controls remain in fullscreen; exit it for settings/new-game controls.
 - Contextual move explanations, searched replies/alternatives, actual AI-response explanations, and read-only scrollable details.
 - Undo, pass, consecutive-pass scoring, dead-group marking, Chinese area scoring with 7.5 komi; confirmed games count once.
 - Local persistence, lesson/topic/completion filters, first unfinished lesson, scene/lesson sharing, and local-data deletion.
 
-The scoreboard also opens explanations. Swipe vertically to read long scenes/details. Leaving the game or backgrounding cancels AI work; returning restarts a pending AI turn and stale results are ignored. Global-mode changes preserve running AI work.
+The scoreboard also opens explanations. Swipe vertically to read long scenes/details. Leaving the game or backgrounding cancels AI work; returning restarts a pending AI turn and stale results are ignored. Fullscreen changes preserve running AI work.
 
 ## Shared code and editions
 
@@ -62,6 +66,6 @@ Provide a real Mini Game AppID and developer/tester permissions. Confirm the act
 
 Configure public contact and genuine filing display information, if applicable, in `config.js`; configure the account's name, avatar, description, review screenshots, and review notes separately. Complete DevTools and physical-device testing before upload/review/publication. Never add an AppSecret, private upload key, or identity documents to source control; local `project.private.config.json` is ignored.
 
-No login, backend, external AI key, analytics/advertising SDK, or network fonts are used. Game and lesson data stay in the device's WeChat storage. Window dimensions/safe areas are used only for layout; sharing contains scene/lesson routing, not game history or learning records. Copying links uses the clipboard. Data do not automatically synchronize with the website, regular Mini Program, other devices, or other AppIDs.
+No login, backend, external AI key, analytics/advertising SDK, or network fonts are used. Game and lesson data stay in the device's WeChat storage. Window dimensions/safe areas are used only for layout; sharing contains scene/lesson routing, not game history or learning records. Data do not automatically synchronize with the website, regular Mini Program, other devices, or other AppIDs.
 
 Tests cover the actual game entry, Canvas hit/touch routing, hold/drag/release, scrolling and cancellation, read-only recommendation details, Worker invalidation, lifecycle, settings/scoring/storage, all lessons, and share routes. Canvas previews use the application renderer with a simulated platform; they are **not WeChat device screenshots**. macOS DevTools and physical WeChat acceptance remain required. See the [Chinese guide](README.zh-CN.md) for the full checklist.

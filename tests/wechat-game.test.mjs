@@ -101,3 +101,25 @@ test('小游戏从课程分享启动、窗口变化、滚动触点映射和菜�
   a.navigate('game');a.session.reset(19,1,0);a.toggleGlobal();assert.equal(a.maxScroll.game,0);for(const id of ['undo','hint','pass','finish']){if(id!=='undo')assert(a.painter.hits.some(h=>h.id===id),id+' remains visible in compact global mode');}a.toggleGlobal();p.events.Hide();p.events.Show({query:{screen:'lesson',id:'6',entry:'second'}});assert.equal(a.lesson.index,6);assert.equal(a.screen,'lesson');a.navigate('game');p.events.Hide();p.events.Show({query:{screen:'lesson',id:'6',entry:'second'}});assert.equal(a.screen,'game','same share query must not reopen a course on ordinary resume');
  }finally{a.destroy();}
 });
+
+
+test('全屏棋盘充分利用小屏宽度，底部控件固定可见且角点触摸不偏移',async()=>{
+ for(const [width,height] of [[320,568],[390,844],[240,360]])for(const n of [9,13,19]){
+  const p=platform({width,height}),a=p.app;
+  try{
+   a.session.reset(n,1,0);a.render();p.tapId('global-mode');
+   const b={...a.boardRect};assert.equal(a.maxScroll.game,0);
+   if(width>=320)assert.equal(b.size,width,'use the entire screen width when height permits');
+   assert(b.y>=a.viewport.top+36);assert(b.y+b.size<=a.viewport.bottom-80);
+   const bottom=a.painter.hits.find(h=>h.id==='finish');assert.equal(bottom.y+bottom.h,a.viewport.bottom);
+   for(const id of ['global-mode','view-normal','view-liberties','view-influence','view-territory','hint','pass','finish','preview-toggle','score-analysis']){
+    const hit=a.painter.hits.find(h=>h.id===id);assert(hit,id);assert(hit.x>=0&&hit.x+hit.w<=width);assert(hit.y>=0&&hit.y+hit.h<=height-34);
+   }
+   assert(!a.painter.hits.some(h=>h.id.startsWith('nav-')));
+   p.tapId('view-territory');assert.equal(a.view,'territory');assert.deepEqual(a.boardRect,b);assert.equal(a.session.state.moves.length,0);
+   const pt=p.point(n*n-1);p.emit('TouchStart',[pt]);await pause(22);p.flush();assert.equal(a.preview.i,n*n-1);assert.deepEqual(a.boardRect,b);p.emit('TouchEnd',[pt]);assert.equal(a.session.state.moves.length,0);
+   p.tap(pt.x,pt.y);assert.equal(a.session.state.board[n*n-1],1);assert.equal(a.session.state.moves.length,1);
+   p.tapId('global-mode');assert.equal(a.globalMode,false);assert(a.painter.hits.some(h=>h.id==='nav-learn'));
+  }finally{a.destroy();}
+ }
+});
