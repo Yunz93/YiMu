@@ -49,52 +49,79 @@ html{scrollbar-gutter:stable}
 .global-score-colon{color:#adb7a2}
 .global-score small{font-size:8px;color:#8a987e}
 #global-turn{padding:4px 7px;border-radius:4px;background:#edf3e6;font-size:9px;color:#648151}
+.board-play-area{display:contents}
+/* Let the board use the viewport; auxiliary content must not shrink it on hover. */
+html.board-global-root{scrollbar-gutter:auto;overflow:hidden}
 body.board-global-mode{overflow:hidden}
 .board-global-mode>.sidebar,.board-global-mode .topbar,.board-global-mode .page-heading,.board-global-mode .learning-section,.board-global-mode main>footer,.board-global-mode .insight-column{display:none}
 .board-global-mode .workspace{margin:0;height:100vh;height:100dvh}
-.board-global-mode main{width:100%;max-width:none;height:100%;padding:12px}
+.board-global-mode main{width:100%;max-width:none;height:100%;padding:8px}
 .board-global-mode .game-layout{display:block;width:100%;height:100%}
-.board-global-mode .board-card{display:flex;flex-direction:column;width:100%;max-width:1440px;height:100%;margin:0 auto;overflow:hidden}
-.board-global-mode .board-toolbar{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;gap:12px;flex:none;padding:10px 20px 0}
-.board-global-mode .board-toolbar-actions{justify-self:end}
-.board-global-mode .players{flex:none;min-height:36px;margin:8px 20px 10px}
-.board-global-mode .preview-controls{flex:none;margin:0 20px 8px}
-.board-global-mode .board-stage{display:flex;align-items:center;justify-content:center;flex:1 1 0;min-width:0;min-height:0;width:100%;overflow:hidden}
-.board-global-mode .board-stage .board-surface{width:var(--global-board-size,min(100%,calc(100vh - 300px)));max-width:none;min-width:0;aspect-ratio:1;margin:0;padding:6px;overflow:hidden;flex:none}
+.board-global-mode .board-card{display:grid;grid-template-columns:minmax(0,1fr) 100px;grid-template-rows:44px minmax(0,1fr) 40px 44px;grid-template-areas:"toolbar toolbar" "board board" "views previewSwitch" "actions actions";width:100%;max-width:none;height:100%;margin:0;overflow:hidden}
+.board-global-mode .board-toolbar{grid-area:toolbar;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;min-width:0}
+.board-global-mode .board-title,.board-global-mode .players,.board-global-mode #board-settings,.board-global-mode #global-score-label{display:none}
+.board-global-mode .global-score{gap:8px;font-size:10px;min-width:0}
+.board-global-mode .global-score b{font-size:18px}
+.board-global-mode #global-turn{font-size:9px}
+.board-global-mode .board-toolbar-actions{margin-left:auto;gap:8px}
+.board-global-mode .preview-controls{grid-area:previewSwitch;justify-content:flex-end;gap:0;margin:0 8px 0 0;min-width:0}
+.board-global-mode .preview-switch{font-size:9px;gap:5px}
+.board-global-mode #preview-help{display:none}
+.board-global-mode .board-stage{grid-area:board;display:flex;align-items:center;justify-content:center;min-width:0;min-height:0;width:100%;overflow:hidden}
+.board-global-mode .board-stage .board-surface{width:var(--global-board-size,min(100%,calc(100dvh - 144px)));max-width:none;min-width:0;aspect-ratio:1;margin:0;padding:6px;overflow:hidden;flex:none}
 .board-global-mode .board-surface #board-wrap{width:100%;min-width:0;max-width:none}
-.board-global-mode .move-preview{flex:none;grid-template-columns:minmax(95px,1fr) minmax(0,2fr);grid-template-rows:1fr;align-items:center;gap:10px;height:48px;margin:6px 20px 0;padding:4px 12px}
-.board-global-mode .move-preview[hidden]{display:none}
-.board-global-mode .move-preview .preview-heading>span,.board-global-mode .move-preview .preview-explanation{display:none}
-.board-global-mode .preview-metrics{gap:10px}
-.board-global-mode .preview-metrics b{font-size:11px;margin-top:3px}
-.board-global-mode .board-view-bar{flex:none;padding:5px 20px;min-height:36px}
-.board-global-mode .view-tabs{margin-left:auto}
+.board-global-mode .board-view-bar{grid-area:views;min-width:0;min-height:0;padding:3px 8px;gap:6px}
+.board-global-mode .view-caption{display:none}
+.board-global-mode .view-tabs{margin-left:0;flex:1;justify-content:space-between;min-width:0}
+.board-global-mode .view-tabs button{padding:6px 10px}
 .board-global-mode #view-description{display:none}
-.board-global-mode .board-actions{flex:none;min-height:44px;padding:9px 20px}
-.board-global-mode .toast{left:50%;bottom:64px}
+.board-global-mode .board-actions{grid-area:actions;min-height:0;padding:6px 12px;gap:14px}
+.board-global-mode .move-preview{position:fixed;left:12px;right:12px;bottom:108px;z-index:30;pointer-events:none;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:18px 30px minmax(0,1fr);gap:6px;height:128px;margin:0;padding:10px 12px;box-shadow:0 4px 20px #29362e18}
+.board-global-mode .move-preview[hidden],.board-global-mode .move-preview[data-preview-state="idle"]{display:none}
+.board-global-mode .preview-heading strong{font-size:11px}
+.board-global-mode .preview-heading>span{font-size:9px}
+.board-global-mode .preview-metrics{gap:8px}
+.board-global-mode .preview-metrics b{font-size:12px;margin-top:3px}
+.board-global-mode .move-preview .preview-explanation{display:block;grid-column:1/-1;font-size:10px;line-height:18px;white-space:normal;overflow:auto}
+.board-global-mode .touch-preview-tip{display:none}
+.board-global-mode .toast{left:50%;bottom:96px}
 @media(max-width:760px){
- .board-global-mode main{padding:6px}
- .board-global-mode .board-toolbar{grid-template-columns:minmax(0,1fr) auto;gap:5px 8px;padding:8px 12px 0}
- .board-global-mode .global-score{grid-column:1/-1;grid-row:2;min-height:25px;gap:9px}
+ .board-global-mode main{padding:max(4px,env(safe-area-inset-top)) max(4px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left))}
+ .board-global-mode .board-toolbar{padding:5px 8px;gap:5px}
+ .board-global-mode .board-toolbar-actions{gap:5px}
+ .board-global-mode .global-score{gap:6px}
  .board-global-mode .global-score b{font-size:16px}
- .board-global-mode .players{margin:5px 12px 8px;min-height:32px}
- .board-global-mode .player-stone{width:24px;height:24px}
- .board-global-mode .preview-controls{margin:0 12px 5px}
- .board-global-mode #preview-help{max-width:none;font-size:8px}
+ .board-global-mode .board-actions{padding:6px 8px;gap:12px}
  .board-global-mode .board-stage .board-surface{padding:4px}
- .board-global-mode .move-preview{grid-template-columns:80px minmax(0,1fr);gap:6px;height:47px;margin:4px 12px 0;padding:4px 8px}
- .board-global-mode .preview-heading strong{font-size:10px}
- .board-global-mode .preview-metrics{gap:5px}
- .board-global-mode .preview-metrics>span{font-size:8px}
- .board-global-mode .preview-metrics b{font-size:10px}
- .board-global-mode .board-view-bar{padding:4px 12px;gap:9px;min-height:34px}
- .board-global-mode .view-caption{display:none}
- .board-global-mode .view-tabs{margin-left:0;flex:1}
- .board-global-mode .board-actions{padding:8px 12px;gap:13px;min-height:42px}
- .board-global-mode .board-toolbar-actions{gap:9px}
+ .board-global-mode .view-tabs button{padding:6px 8px}
 }
-@media(max-height:560px){
- .board-global-mode .players,.board-global-mode .preview-controls,.board-global-mode .move-preview{display:none}
+/* On landscape screens, controls use spare width instead of board height. */
+@media(min-width:960px) and (min-aspect-ratio:6/5){
+ .board-global-mode .board-card{grid-template-columns:minmax(0,1fr) 272px;grid-template-rows:auto auto auto minmax(0,1fr) auto;grid-template-areas:"board toolbar" "board previewSwitch" "board preview" "board ." "board actions"}
+ .board-global-mode .board-play-area{grid-area:board;display:grid;grid-template-rows:minmax(0,1fr) 40px;grid-template-areas:"board" "views";min-width:0;min-height:0}
+ .board-global-mode .view-caption{display:flex}
+ .board-global-mode .view-tabs{flex:0 1 auto;margin-left:auto;justify-content:normal}
+ .board-global-mode .board-toolbar{display:flex;flex-wrap:wrap;align-content:flex-start;gap:12px;padding:18px 16px 12px}
+ .board-global-mode .board-title{display:flex;width:100%;justify-content:space-between}
+ .board-global-mode .global-score{width:100%;justify-content:space-between;gap:6px}
+ .board-global-mode .global-score b{font-size:20px}
+ .board-global-mode #board-settings{display:flex}
+ .board-global-mode .board-toolbar-actions{width:100%;justify-content:space-between}
+ .board-global-mode .preview-controls{margin:0;padding:8px 16px;justify-content:flex-start;border-top:1px solid var(--border)}
+ .board-global-mode .preview-switch{font-size:10px;gap:8px}
+ .board-global-mode .board-view-bar{padding:8px 16px 4px}
+ .board-global-mode .view-tabs button{padding:7px 10px}
+ .board-global-mode .move-preview:not([hidden]){grid-area:preview;position:static;display:grid;pointer-events:auto;align-self:start;height:174px;grid-template-rows:18px 36px minmax(0,1fr);gap:10px;margin:8px 12px 0;padding:12px;box-shadow:none}
+ .board-global-mode .preview-heading>span{display:none}
+ .board-global-mode .preview-metrics>span{font-size:9px}
+ .board-global-mode .board-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-top:12px;padding:12px}
+ .board-global-mode .action-spacer{display:none}
+ .board-global-mode .action-btn{min-height:34px;justify-content:center;font-size:10px}
+}
+@media(min-width:960px) and (min-aspect-ratio:6/5) and (max-height:680px){
+ .board-global-mode .board-toolbar{padding:10px 16px;gap:8px}
+ .board-global-mode .move-preview:not([hidden]){height:124px;grid-template-rows:16px 28px minmax(0,1fr);gap:5px;padding:9px}
+ .board-global-mode .action-btn{min-height:28px}
 }
 
 #board{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
@@ -111,8 +138,6 @@ body.board-global-mode{overflow:hidden}
 .move-response{border-top:1px solid var(--border);padding:16px 0;margin-top:12px}
 .move-response summary{cursor:pointer;color:var(--green);font-weight:550;line-height:1.8}
 .analysis-board{max-width:480px}
-.board-global-mode .move-preview{height:76px;grid-template-rows:34px 20px;row-gap:3px}
-.board-global-mode .move-preview .preview-explanation{display:block;grid-column:1/-1;font-size:9px;line-height:20px;white-space:nowrap;overflow:auto}
 
 .learning-overview .stats-grid{margin:18px 0 14px}
 .learning-overview .stat-box strong{font-variant-numeric:tabular-nums}

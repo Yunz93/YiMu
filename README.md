@@ -15,7 +15,7 @@ The application interface is currently in **Simplified Chinese**. Project docume
 - **Understand each move:** position-specific explanations distinguish escapes, strengthening, atari, liberty pressure, connections, cutting points, supporting moves, approaches, captures, and possible eye filling. Each explanation identifies affected groups by coordinate, compares liberties before and after, and flags immediate capture risks or groups left in atari. Existing saved games receive the updated explanations too.
 - **Know why a move is suggested:** **给我提示** opens a detailed recommendation with board evidence, tradeoffs, a legal opponent response considered during search, and other searched candidates. The suggestion remains in the coach card after closing the dialog. Move and preview details also explain what to watch next; opening the explanation never commits a move.
 - **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. On a phone or tablet, hold an intersection for about 0.4 seconds to preview, keep holding and drag to inspect other points, then release to dismiss without playing. A floating summary stays visible during the hold. A quick click or tap still plays immediately, with no second confirmation. Hovering or holding does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
-- **Global board mode:** expand the complete board into a focused viewport, with live scores, turn status, board views, and game controls. The standard 19×19 board fits the available space without horizontal scrolling in this mode. Click **全局模式** above the board to enter; click **退出全局** or press Escape to leave. Games and AI thinking continue across mode changes.
+- **Global board mode:** expand the complete board into a focused viewport. Landscape desktops place scores, previews, and actions beside the board so they do not consume its height; narrow screens use compact controls and floating move previews. View switches remain below the board. Hovering, holding, and changing the preview preference do not resize the board, and 19×19 fits without horizontal scrolling. Click **退出全局** or press Escape to leave; the game and AI thinking continue across mode changes.
 - **Four board views:** the regular board, shared liberties, influence, and estimated territory. Select a stone in the liberties view to inspect its group.
 - **A patient AI companion:** three search settings, move suggestions, undo, and a choice of playing Black or White on 9×9, 13×13, or standard 19×19 boards.
 - **One learning center:** **学习中心** combines the 16 interactive lessons and learning progress in one place. See completed courses, moves played, and finished games; resume the first unfinished lesson; filter by topic and completion status. Returning from a lesson keeps the selected filters. Courses cover basic rules, atari escapes, capture exceptions, ko, false eyes, dame, seki, dead-group marking, passing, standard-board coordinates, and opening lines.
@@ -72,6 +72,16 @@ npm run build
 ```
 
 Tests also verify non-mutating previews, 19×19 board edges, ko and seki lesson positions, and the standard-board coordinate targets. The original tests cover shared liberties, multi-stone captures, suicide and capture exceptions, positional superko, occupied and out-of-bounds points, Chinese area scoring, dead-stone removal, empty-board estimates, and move explanations.
+
+For real Chromium layout regression checks, install the optional developer tools:
+
+```sh
+python3 -m pip install playwright
+python3 -m playwright install chromium
+python3 tests/browser/fullscreen.py
+```
+
+This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, and play/AI responses. An installed system Chromium is used when available.
 
 ## Learning flow
 

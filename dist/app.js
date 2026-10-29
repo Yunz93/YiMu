@@ -59,6 +59,7 @@ function setGlobalMode(enabled){
  if(enabled)globalModeScroll={x:window.scrollX||0,y:window.scrollY||0};
  touchPreview.cancel();cancelScheduledPreview();preview=null;globalMode=enabled;
  document.body.classList.toggle('board-global-mode',enabled);
+ document.documentElement.classList.toggle('board-global-root',enabled);
  const button=$('#global-mode-btn');button.setAttribute('aria-pressed',String(enabled));
  button.title=enabled?'退出棋盘全局模式（Esc）':'进入棋盘全局模式';
  setText('#global-mode-label',enabled?'退出全局':'全局模式');
