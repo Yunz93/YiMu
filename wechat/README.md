@@ -34,6 +34,7 @@ DevTools is loading the project as a **Mini Game**. This repository supplies a r
 
 ## Features and behavior
 
+- Local stone sounds accompany legal human/AI moves and actual lesson placements. Toggle **落子音效** in game settings; the preference persists. Preview, undo, pass, dead-group marking, and restoring progress remain quiet. Playback respects the device silent switch. Audio stops in the background and resources are released on exit.
 - 9×9, 13×13 and 19×19 boards; Black/White choice; three AI search settings.
 - Tap once to play. Hold for 0.4 seconds to preview; drag while holding to inspect another point; release dismisses without playing. Preview can be disabled.
 - Liberties, influence, estimated territory, global board mode, undo, pass, scoring and whole-group dead-stone marking. Chinese area scoring with 7.5 komi; completed games count once.

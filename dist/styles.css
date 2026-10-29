@@ -182,3 +182,7 @@ body.board-global-mode{overflow:hidden}
  .learning-filter-row{gap:8px}
  .lesson-grid{grid-template-columns:1fr}
 }
+
+.global-sound-toggle{display:none}
+.board-global-mode .global-sound-toggle{display:inline-flex;flex-shrink:0}
+.sound-toggle[aria-pressed="false"]{color:#a0a993}

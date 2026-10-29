@@ -8,12 +8,14 @@ const {coord,signed}=require('../utils/format');
 const {Painter,COLORS:C}=require('./painter');
 const Views=require('./views');
 const config=require('../config');
+const {StoneSound}=require('../utils/sound');
 const inside=(p,r)=>r&&p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h;
 class YiMuGame{
  constructor(api,canvas,options={}){
   this.api=api;this.canvas=canvas;this.context=canvas.getContext('2d');this.painter=new Painter(this.context);this.config=config;this.signed=signed;
   this.requestFrame=options.requestFrame||((fn)=>setTimeout(fn,0));this.cancelFrame=options.cancelFrame||clearTimeout;this.gestureDelay=options.gestureDelay??400;
   this.session=new Session(Store.read(Store.KEYS.game,null),Store.stats());this.previewEnabled=Store.read(Store.KEYS.preview,true)!==false;
+  this.soundEnabled=Store.read(Store.KEYS.sound,true)!==false;this.sound=new StoneSound(api,this.soundEnabled);
   this.screen='game';this.view='normal';this.globalMode=false;this.saved=true;this.busy=false;this.aiError='';this.selected=-1;this.preview=null;this.hint=null;this.modal=null;
   this.scroll={game:0,learn:0,lesson:0,about:0};this.maxScroll={game:0,learn:0,lesson:0,about:0};this.filters={category:'全部课程',status:0};this.serial=0;this.removers=[];this.active=false;this.destroyed=false;
  }
@@ -85,8 +87,9 @@ class YiMuGame{
  navigate(screen){if(!['game','learn','about'].includes(screen))return;this.cancelTouch();this.stopAI();this.hint=null;this.modal=null;this.globalMode=false;this.screen=screen;this.session.stats=Store.stats();this.resize();this.scheduleAI();}
  openLesson(index){if(!Number.isInteger(index)||!lessons[index])return;this.cancelTouch();this.stopAI();this.hint=null;this.modal=null;this.globalMode=false;this.lesson=new Lesson(index);this.screen='lesson';this.scroll.lesson=0;this.resize();}
  finishLesson(done){if(done&&!Store.completeLesson(this.lesson.index))this.toast('本课已完成，但进度暂未保存');this.render();}
- pickLesson(i){this.finishLesson(this.lesson.click(i));}answerLesson(i){this.finishLesson(this.lesson.answer(i));}passLesson(){this.finishLesson(this.lesson.pass());}
- play(i){const s=this.session.state;if(this.busy||this.screen!=='game')return;if(s.ended){if(this.session.toggleDead(i)){this.save();this.render();}return;}if(this.view==='liberties'&&s.board[i]){this.selected=i;this.preview=null;this.render();return;}this.preview=null;this.hint=null;const r=this.session.move(i);if(r.error){this.toast(r.error);this.render();return;}this.selected=-1;this.save();this.render();this.scheduleAI();}
+ pickLesson(i){const before=this.lesson.board.slice(),done=this.lesson.click(i);if(this.lesson.board.some((v,j)=>v&&!before[j]))this.sound.play();this.finishLesson(done);}answerLesson(i){this.finishLesson(this.lesson.answer(i));}passLesson(){this.finishLesson(this.lesson.pass());}
+ play(i){const s=this.session.state;if(this.busy||this.screen!=='game')return;if(s.ended){if(this.session.toggleDead(i)){this.save();this.render();}return;}if(this.view==='liberties'&&s.board[i]){this.selected=i;this.preview=null;this.render();return;}this.preview=null;this.hint=null;const r=this.session.move(i);if(r.error){this.toast(r.error);this.render();return;}this.selected=-1;if(i>=0)this.sound.play();this.save();this.render();this.scheduleAI();}
+ toggleSound(){this.soundEnabled=!this.soundEnabled;this.sound.setEnabled(this.soundEnabled);if(!Store.write(Store.KEYS.sound,this.soundEnabled))this.toast('音效设置暂未保存');this.render();}
  togglePreview(){if(this.busy||this.session.state.ended)return;this.cancelTouch();this.previewEnabled=!this.previewEnabled;if(!Store.write(Store.KEYS.preview,this.previewEnabled))this.toast('预览设置暂未保存');this.render();}
  toggleGlobal(){this.cancelTouch();this.globalMode=!this.globalMode;this.scroll.game=0;this.resize();}
  stopAI(){clearTimeout(this.aiTimer);clearTimeout(this.watchdog);this.serial++;if(this.worker){this.worker.terminate();this.worker=null;}this.busy=false;}
@@ -95,7 +98,7 @@ class YiMuGame{
   const fail=()=>{if(id!==this.serial)return;this.stopAI();this.aiError='AI 搜索未完成，请重试；若仍失败，请更新微信。';this.render();};
   try{const worker=this.api.createWorker('workers/ai.js');this.worker=worker;worker.onMessage(data=>{if(!this.active||this.screen!=='game'||id!==this.serial||data.id!==id||E.key(this.session.state.board)!==position)return;if(data.error){fail();return;}this.stopAI();
     if(isHint){if(data.i>=0){const p=this.session.preview(data.i);if(p.error){this.toast(p.error);this.render();return;}this.hint={...p,search:data};this.showAnalysis();}else{this.hint=null;this.toast('目前可以考虑停一手。');}}
-    else{const r=this.session.move(data.i,s.turn);if(r.error){this.aiError=r.error;this.render();return;}this.hint=null;this.save();if(data.i===-1)this.toast('AI 选择停一手。');}this.render();
+    else{const r=this.session.move(data.i,s.turn);if(r.error){this.aiError=r.error;this.render();return;}this.hint=null;if(data.i>=0)this.sound.play();this.save();if(data.i===-1)this.toast('AI 选择停一手。');}this.render();
    });if(worker.onError)worker.onError(fail);if(worker.onProcessKilled)worker.onProcessKilled(fail);this.watchdog=setTimeout(fail,45000);worker.postMessage({id,board:s.board.slice(),color:isHint?s.human:s.turn,n:s.n,history:this.session.history(),difficulty:s.difficulty});
   }catch{fail();}
  }
@@ -122,12 +125,12 @@ class YiMuGame{
   }
   sections.push({text:'查看讲解不会落子。AI 为入门搜索陪练，不保证最优，复杂死活需要继续验证。'});this.modal={kind:'analysis',title,sections,scroll:0};this.render();
  }
- clearData(){this.confirm('清除本机进度？','将删除当前小游戏的棋局、课程进度、累计统计和预览设置，无法恢复；网页版数据不受影响。',()=>{if(Store.clear()){this.stopAI();this.session=new Session(null,Store.stats());this.previewEnabled=true;this.hint=null;this.preview=null;this.selected=-1;this.saved=true;this.toast('本机进度已清除');this.render();}else this.toast('清除失败，请重试');});}
+ clearData(){this.confirm('清除本机进度？','将删除当前小游戏的棋局、课程进度、累计统计、预览和音效设置，无法恢复；网页版数据不受影响。',()=>{if(Store.clear()){this.stopAI();this.session=new Session(null,Store.stats());this.previewEnabled=true;this.soundEnabled=true;this.sound.setEnabled(true);this.hint=null;this.preview=null;this.selected=-1;this.saved=true;this.toast('本机进度已清除');this.render();}else this.toast('清除失败，请重试');});}
  shareData(){const lesson=this.screen==='lesson'?this.lesson:null;return {title:lesson?'一目互动课 · '+lesson.lesson.title:'一目 · 每一手，都看得懂',query:`screen=${lesson?'lesson':this.screen==='learn'?'learn':'game'}${lesson?'&id='+lesson.index:''}&entry=${Date.now()}`};}
  share(){if(this.api.shareAppMessage)this.api.shareAppMessage(this.shareData());else this.toast('请通过微信右上角菜单分享');}
  applyLaunch(options){const q=options&&options.query||{};if(!q.screen)return;const key=q.entry||JSON.stringify(q);if(key===this.launchKey)return;this.launchKey=key;if(q.screen==='lesson'){const i=Number(q.id);if(Number.isInteger(i)&&lessons[i]){this.lesson=new Lesson(i);this.screen='lesson';this.scroll.lesson=0;}}else if(['game','learn'].includes(q.screen))this.screen=q.screen;}
- hide(){this.active=false;this.stopAI();this.cancelTouch();this.preview=null;this.modal=null;if(this.frame!==undefined){this.cancelFrame(this.frame);this.frame=undefined;}}
- show(options={}){if(this.destroyed)return;this.active=true;this.session=new Session(Store.read(Store.KEYS.game,null),Store.stats());this.previewEnabled=Store.read(Store.KEYS.preview,true)!==false;this.selected=-1;this.preview=null;this.hint=null;this.aiError='';this.applyLaunch(options);this.resize();this.scheduleAI();}
- destroy(){this.hide();this.destroyed=true;this.removers.forEach(fn=>fn());this.removers=[];}
+ hide(){this.sound.stop();this.active=false;this.stopAI();this.cancelTouch();this.preview=null;this.modal=null;if(this.frame!==undefined){this.cancelFrame(this.frame);this.frame=undefined;}}
+ show(options={}){if(this.destroyed)return;this.active=true;this.session=new Session(Store.read(Store.KEYS.game,null),Store.stats());this.previewEnabled=Store.read(Store.KEYS.preview,true)!==false;this.soundEnabled=Store.read(Store.KEYS.sound,true)!==false;this.sound.setEnabled(this.soundEnabled);this.selected=-1;this.preview=null;this.hint=null;this.aiError='';this.applyLaunch(options);this.resize();this.scheduleAI();}
+ destroy(){this.hide();this.sound.destroy();this.destroyed=true;this.removers.forEach(fn=>fn());this.removers=[];}
 }
 module.exports={YiMuGame};

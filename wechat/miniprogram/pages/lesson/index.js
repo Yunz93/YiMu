@@ -2,15 +2,18 @@ const {Lesson}=require('../../utils/lesson');
 const {lessons}=require('../../shared/lessons');
 const {influence}=require('../../shared/engine');
 const Store=require('../../utils/storage');
+const {StoneSound}=require('../../utils/sound');
 Page({
  data:{valid:false},
- onLoad(query){const index=Number(query.id);if(!Number.isInteger(index)||!lessons[index]){this.setData({error:'没有找到这节课程，请返回学习中心。'});return;}this._lesson=new Lesson(index);const l=this._lesson.lesson;wx.setNavigationBarTitle({title:l.title});const answers=l.mode==='score'?['黑 5 · 白 5','黑 10 · 白 10','黑 15 · 白 15']:l.answers||[];this.setData({valid:true,lesson:l,index,total:lessons.length,answers});this.resize();this.refresh();},
+ onLoad(query){const index=Number(query.id);if(!Number.isInteger(index)||!lessons[index]){this.setData({error:'没有找到这节课程，请返回学习中心。'});return;}this._sound=new StoneSound(wx,Store.read(Store.KEYS.sound,true)!==false,'/audio/stone.wav');this._lesson=new Lesson(index);const l=this._lesson.lesson;wx.setNavigationBarTitle({title:l.title});const answers=l.mode==='score'?['黑 5 · 白 5','黑 10 · 白 10','黑 15 · 白 15']:l.answers||[];this.setData({valid:true,lesson:l,index,total:lessons.length,answers});this.resize();this.refresh();},
+ onShow(){if(this._sound)this._sound.setEnabled(Store.read(Store.KEYS.sound,true)!==false);},
+ onUnload(){if(this._sound)this._sound.destroy();},
  onResize(){this.resize();},
- onHide(){const board=this.selectComponent('#lesson-board');if(board)board.cancelGesture();},
+ onHide(){if(this._sound)this._sound.stop();const board=this.selectComponent('#lesson-board');if(board)board.cancelGesture();},
  resize(){const info=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();this.setData({boardSize:Math.floor(info.windowWidth-48)});},
  refresh(){const model=this._lesson;if(!model)return;const l=model.lesson;this.setData({board:model.board,last:model.last,captured:model.captured,selected:['libs','eyes','coordinates'].includes(l.mode)?model.selected:[],dead:model.dead,inf:l.mode==='compare'?influence(model.board,l.n):[],feedback:model.feedback,done:model.done,phase:model.phase,nextEnabled:model.done||Store.stats().completed.includes(model.index)});},
  finishInteraction(completed){if(completed&&!Store.completeLesson(this._lesson.index))wx.showToast({title:'本课已完成，但进度暂未保存，请检查存储空间。',icon:'none'});this.refresh();},
- pick(e){this.finishInteraction(this._lesson.click(e.detail.i));},
+ pick(e){const before=this._lesson.board.slice(),done=this._lesson.click(e.detail.i);if(this._lesson.board.some((v,j)=>v&&!before[j]))this._sound.play();this.finishInteraction(done);},
  answer(e){this.finishInteraction(this._lesson.answer(Number(e.currentTarget.dataset.index)));},
  pass(){this.finishInteraction(this._lesson.pass());},
  reset(){this._lesson.reset();this.refresh();},

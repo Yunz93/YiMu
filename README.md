@@ -12,6 +12,7 @@ The application interface is currently in **Simplified Chinese**. Project docume
 
 ## Features
 
+- **Stone sounds:** a short local stone-on-wood click accompanies legal human/AI moves and stone placements in lessons. Preview, undo, pass, dead-group marking, and restoring progress stay quiet. The speaker button in the top bar (or fullscreen toolbar) toggles sound and remembers your preference. Browser audio starts after your first interaction.
 - **Understand each move:** position-specific explanations distinguish escapes, strengthening, atari, liberty pressure, connections, cutting points, supporting moves, approaches, captures, and possible eye filling. Each explanation identifies affected groups by coordinate, compares liberties before and after, and flags immediate capture risks or groups left in atari. Existing saved games receive the updated explanations too.
 - **Know why a move is suggested:** **给我提示** opens a detailed recommendation with board evidence, tradeoffs, a legal opponent response considered during search, and other searched candidates. The suggestion remains in the coach card after closing the dialog. Move and preview details also explain what to watch next; opening the explanation never commits a move.
 - **Preview before committing:** hover with a mouse to inspect liberties, captures, influence, and estimated area changes. On a phone or tablet, hold an intersection for about 0.4 seconds to preview, keep holding and drag to inspect other points, then release to dismiss without playing. A floating summary stays visible during the hold. A quick click or tap still plays immediately, with no second confirmation. Hovering or holding does not change the game, progress, or AI turn. Preview can be switched off and the preference is remembered.
@@ -80,9 +81,12 @@ python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/browser/fullscreen.py
 python3 tests/browser/settings.py
+python3 tests/browser/sound.py
 ```
 
 This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, play/AI responses, and complete settings option labels. An installed system Chromium is used when available.
+
+The 140 ms stone click is synthesized locally. After changing `stoneSamples()` in `dist/stone-sound.js`, run `npm run build:sound` to regenerate the WeChat WAV assets; `npm run check:sound` verifies them.
 
 ## Learning flow
 

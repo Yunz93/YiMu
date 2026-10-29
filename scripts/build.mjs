@@ -4,7 +4,7 @@ import { dirname, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const assets = ['index.html', 'styles.css', 'app.js', 'ai.js', 'engine.js', 'lessons.js', 'touch-preview.js'];
+const assets = ['index.html', 'styles.css', 'app.js', 'ai.js', 'engine.js', 'lessons.js', 'touch-preview.js', 'stone-sound.js', 'audio/stone.wav'];
 for (const asset of assets) {
   const path = resolve(root, 'dist', asset);
   await access(path);

@@ -14,6 +14,7 @@ function platform({width=390,height=844,query={}}={}){
  const canvas={width,height,getContext:()=>ctx};
  const wx={createCanvas:()=>canvas,getWindowInfo:()=>({windowWidth:width,windowHeight:height,pixelRatio:2,safeArea:{top:47,bottom:height-34}}),getMenuButtonBoundingClientRect:()=>({bottom:80}),getStorageSync:k=>values.get(k)??'',setStorageSync:(k,v)=>{if(failStorage)throw new Error('quota');values.set(k,structuredClone(v));},removeStorageSync:k=>values.delete(k),getLaunchOptionsSync:()=>({query}),showShareMenu:()=>{},shareAppMessage:o=>notices.push(o),setClipboardData:o=>notices.push(o),showToast:o=>notices.push(o),showModal:o=>{notices.push(o);o.success({confirm:true});},createWorker:path=>{const worker={path,onMessage(fn){this.receive=fn;},onError(fn){this.error=fn;},postMessage(data){this.message=data;},terminate(){this.terminated=true;}};workers.push(worker);return worker;}};
  for(const event of ['TouchStart','TouchMove','TouchEnd','TouchCancel','Hide','Show','WindowResize','ShareAppMessage']){wx['on'+event]=fn=>{events[event]=fn;};wx['off'+event]=fn=>{if(events[event]===fn)delete events[event];};}
+ const audios=[];wx.createInnerAudioContext=()=>{const a={plays:0,stops:0,destroyed:false,onError(){},play(){this.plays++;},stop(){this.stops++;},destroy(){this.destroyed=true;}};audios.push(a);return a;};
  globalThis.wx=wx;
  const options={gestureDelay:12,requestFrame:fn=>{const id=++nextFrame;frames.set(id,fn);return id;},cancelFrame:id=>frames.delete(id)};
  const app=new YiMuGame(wx,canvas,options).start();
@@ -22,7 +23,7 @@ function platform({width=390,height=844,query={}}={}){
  function tap(x,y){emit('TouchStart',[{x,y}]);emit('TouchEnd',[{x,y}]);}
  function tapId(id){const hit=app.painter.hits.find(r=>r.id===id);assert(hit,'visible hit target '+id);tap(hit.x+hit.w/2,hit.y+hit.h/2);}
  function point(i){const b=app.boardRect;assert(b);return {x:b.x+b.size*.075+i%b.n*b.size*.85/(b.n-1),y:b.y+b.size*.075+Math.floor(i/b.n)*b.size*.85/(b.n-1)};}
- return {app,wx,canvas,values,workers,notices,events,commands,options,flush,emit,tap,tapId,point,resize:(w,h)=>{width=w;height=h;events.WindowResize();flush();},failStorage:()=>{failStorage=true;}};
+ return {app,wx,canvas,values,workers,notices,events,commands,options,audios,flush,emit,tap,tapId,point,resize:(w,h)=>{width=w;height=h;events.WindowResize();flush();},failStorage:()=>{failStorage=true;}};
 }
 const pause=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 
@@ -122,4 +123,24 @@ test('全屏棋盘充分利用小屏宽度，底部控件固定可见且角点�
    p.tapId('global-mode');assert.equal(a.globalMode,false);assert(a.painter.hits.some(h=>h.id==='nav-learn'));
   }finally{a.destroy();}
  }
+});
+
+
+test('小游戏落子音效只跟随真实落子，静音持久保存，后台和迟到应手保持安静',()=>{
+ const p=platform(),a=p.app;
+ const plays=()=>p.audios.reduce((sum,x)=>sum+x.plays,0);
+ try{
+  a.preview=a.session.preview(20);a.render();a.preview=null;assert.equal(plays(),0);
+  a.play(20);assert.equal(plays(),1);a.askAI(false);let worker=p.workers.at(-1);worker.receive({id:worker.message.id,i:60});assert.equal(plays(),2);
+  a.play(20);assert.equal(plays(),2);a.undo();assert.equal(plays(),2);
+  a.askAI(true);worker=p.workers.at(-1);worker.receive({id:worker.message.id,i:24});assert.equal(plays(),2);a.closeModal();
+  a.openSettings(false);p.tapId('sound-toggle');assert.equal(a.soundEnabled,false);assert.equal(Store.read(Store.KEYS.sound,true),false);a.closeModal();
+  a.play(20);a.askAI(false);worker=p.workers.at(-1);a.hide();worker.receive({id:worker.message.id,i:60});assert.equal(plays(),2);
+  a.show();assert.equal(a.soundEnabled,false);a.stopAI();a.toggleSound();
+  a.openLesson(1);a.pickLesson(17);assert.equal(plays(),3);
+  a.openLesson(0);a.pickLesson(7);assert.equal(plays(),3);
+  a.openLesson(2);a.pickLesson(12);assert.equal(plays(),3);
+  a.openLesson(12);a.pickLesson(6);assert.equal(plays(),3);
+  a.destroy();assert(p.audios.every(x=>x.destroyed));
+ }finally{if(!a.destroyed)a.destroy();}
 });

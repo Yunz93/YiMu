@@ -116,7 +116,7 @@ function lessonView(a,p,w){
 function aboutView(a,p,w){
  const x=16,cw=w-32;let y=10;
  p.text('让每一手，都看得懂。',x,y,22,C.ink,'600');y+=37;p.text('YiMu · 一目小游戏 '+a.config.version,x,y,12,C.muted);y+=32;
- const sections=[['关于一目','互动课程、落子讲解、局面预览和本地 AI 陪练，帮助初学者理解围棋。AI 棋力未经段级位评定，复杂死活需要继续验证。'],['隐私与本机数据','本版本无需登录。棋局、课程完成记录、累计统计、预览设置保存在当前设备的微信小游戏存储中，不会自动同步到网页版、普通小程序或其他设备。'],['本地计算','应用代码不向自建服务器或外部 AI 服务上传棋局，未接入广告、统计 SDK 或网络字体。窗口尺寸、像素比和安全区域仅在本地用于适配界面。'],['分享与清除','分享只携带首页或课程入口，不包含棋局、身份或学习记录。清理小游戏存储、更换设备可能丢失进度；下方可主动清除本机记录。']];
+ const sections=[['关于一目','互动课程、落子讲解、局面预览和本地 AI 陪练，帮助初学者理解围棋。AI 棋力未经段级位评定，复杂死活需要继续验证。'],['隐私与本机数据','本版本无需登录。棋局、课程完成记录、累计统计、预览与音效设置保存在当前设备的微信小游戏存储中，不会自动同步到网页版、普通小程序或其他设备。'],['本地计算','应用代码不向自建服务器或外部 AI 服务上传棋局，未接入广告、统计 SDK 或网络字体。窗口尺寸、像素比和安全区域仅在本地用于适配界面。'],['分享与清除','分享只携带首页或课程入口，不包含棋局、身份或学习记录。清理小游戏存储、更换设备可能丢失进度；下方可主动清除本机记录。']];
  for(const [title,text] of sections){p.text(title,x,y,16,C.ink,'600');y+=29;y+=p.paragraph(text,x,y,cw,{size:13,lineHeight:22})+24;}
  if(a.config.contact)y+=p.paragraph('反馈联系方式：'+a.config.contact,x,y,cw,{size:13,lineHeight:22})+18;
  if(a.config.filingNumber)y+=p.paragraph('备案号：'+a.config.filingNumber,x,y,cw,{size:12,lineHeight:20})+18;
@@ -127,13 +127,14 @@ function modalView(a,p,w,h){
  const headingLines=p.lines(m.title,width-92,16).slice(0,2),headerHeight=Math.max(60,headingLines.length*23+28);
  const groups=[['棋盘大小','size',[[9,'9 路'],[13,'13 路'],[19,'19 路']]],['你执哪一方','human',[[1,'执黑 · 先行'],[2,'执白 · 后行']]],['AI 思考程度','difficulty',[[0,'轻松入门'],[1,'认真思考'],[2,'深入挑战']]]];
  const note='调整棋盘或执子方会开启新局，课程和累计统计会保留。';
- const contentHeight=m.kind==='settings'?groups.length*90+p.lines(note,bw,12).length*21+16:(m.sections||[]).reduce((sum,section)=>sum+(section.heading?p.lines(section.heading,bw,14).length*22+8:0)+p.lines(section.text,bw,13).length*22+22,12);
+ const contentHeight=m.kind==='settings'?groups.length*90+44+p.lines(note,bw,12).length*21+16:(m.sections||[]).reduce((sum,section)=>sum+(section.heading?p.lines(section.heading,bw,14).length*22+8:0)+p.lines(section.text,bw,13).length*22+22,12);
  const sheetHeight=Math.min(bottom-a.headerTop,Math.max(220,contentHeight+headerHeight+70)),y=bottom-sheetHeight,bodyTop=y+headerHeight,bodyBottom=bottom-62;
  p.ctx.fillStyle='rgba(28,47,31,.35)';p.ctx.fillRect(0,0,w,h);p.card(x,y,width,sheetHeight,'#fcfdf9',null,16);p.hits=[];
  headingLines.forEach((line,i)=>p.text(line,bx,y+20+i*23,16,C.ink,'600'));p.button('modal-close','关闭',w-74,y+14,48,32,()=>a.closeModal(),{quiet:true});p.rule(bx,bodyTop-1,bw);
  p.startScroll(bodyTop,bodyBottom,m.scroll||0);let cy=12;
  if(m.kind==='settings'){
   for(const [title,field,options] of groups){p.text(title,bx,cy,13,C.ink,'600');cy+=28;const itemw=(bw-(options.length-1)*7)/options.length;options.forEach(([value,label],i)=>p.button('setting-'+field+'-'+value,label,bx+i*(itemw+7),cy,itemw,36,()=>{m[field]=value;a.render();},{selected:m[field]===value}));cy+=62;}
+  p.toggle('sound-toggle','落子音效',bx,cy,bw,a.soundEnabled,()=>a.toggleSound());cy+=44;
   cy+=p.paragraph(note,bx,cy,bw,{size:12,lineHeight:21})+4;
  }else{
   for(const section of m.sections||[]){if(section.heading)cy+=p.paragraph(section.heading,bx,cy,bw,{size:14,lineHeight:22,color:section.risk?C.risk:C.green})+8;cy+=p.paragraph(section.text,bx,cy,bw,{size:13,lineHeight:22,color:section.risk?C.risk:C.muted})+22;}

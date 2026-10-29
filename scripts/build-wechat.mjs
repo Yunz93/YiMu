@@ -9,10 +9,11 @@ const check=process.argv.includes('--check');
 await checkWechatProject(resolve(root,'wechat'));
 async function emit(path,source){
  const target=resolve(destination,path);
- if(check){if(await readFile(target,'utf8')!==source)throw new Error(`${path} is stale; run npm run build:wechat`);}
+ if(check){const actual=await readFile(target,typeof source==='string'?'utf8':undefined);if(Buffer.isBuffer(source)?!actual.equals(source):actual!==source)throw new Error(`${path} is stale; run npm run build:wechat`);}
  else{await mkdir(dirname(target),{recursive:true});await writeFile(target,source);}
 }
 function commonJS(source,names){return '// Generated from dist/ by scripts/build-wechat.mjs. Do not edit.\n'+source.replace(/\bexport /g,'')+'\nmodule.exports={'+names.join(',')+'};\n';}
+await emit('audio/stone.wav',await readFile(resolve(root,'dist/audio/stone.wav')));
 const engine=await readFile(resolve(root,'dist/engine.js'),'utf8');
 const exports=[...engine.matchAll(/export function (\w+)/g)].map(m=>m[1]);
 const rules=commonJS(engine,['BLACK','WHITE','key',...exports]);

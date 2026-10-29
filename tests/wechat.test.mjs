@@ -15,7 +15,8 @@ const makeBoard=(stones,n=5)=>{const b=blank(n);stones.forEach(([i,c])=>b[i]=c);
 function platform(){
  const values=new Map(),workers=[],notifications=[],routes=[];let failWrite=false;
  const wx={getStorageSync:k=>values.get(k)??'',setStorageSync:(k,v)=>{if(failWrite)throw new Error('quota');values.set(k,JSON.parse(JSON.stringify(v)));},removeStorageSync:k=>values.delete(k),getWindowInfo:()=>({windowWidth:390,windowHeight:700,pixelRatio:2}),nextTick:fn=>fn(),showToast:o=>notifications.push(o),showModal:o=>{notifications.push(o);if(o.success)o.success({confirm:true});},hideTabBar:o=>{if(o.success)o.success();},showTabBar:o=>{if(o.success)o.success();},setNavigationBarTitle:()=>{},navigateTo:o=>routes.push(o),redirectTo:o=>routes.push(o),switchTab:o=>routes.push(o),createWorker:()=>{const w={onMessage(fn){this.receive=fn;},onError(fn){this.error=fn;},postMessage(m){this.message=m;},terminate(){this.terminated=true;}};workers.push(w);return w;}};
- globalThis.wx=wx;return {wx,values,workers,notifications,routes,failWrite:()=>{failWrite=true;}};
+ const audios=[];wx.createInnerAudioContext=()=>{const a={plays:0,stops:0,destroyed:false,onError(){},play(){this.plays++;},stop(){this.stops++;},destroy(){this.destroyed=true;}};audios.push(a);return a;};
+ globalThis.wx=wx;return {wx,values,workers,notifications,routes,audios,failWrite:()=>{failWrite=true;}};
 }
 function loadPage(name,wx){
  const path=new URL(`../wechat/miniprogram/pages/${name}/index.js`,import.meta.url),local=createRequire(path);let definition;
@@ -131,4 +132,15 @@ test('Canvas棋盘组件在9/19路真实事件链上长按只读、下一次轻�
   assert.equal(canvas.width,680);assert(calls.some(c=>c[0]==='arc'));
   page.onHide();definition.lifetimes.detached.call(component);
  }
+});
+
+
+test('普通小程序的音效只在合法人机和课程落子时播放，静音跨页面保存',()=>{
+ const p=platform(),page=loadPage('game',p.wx),plays=()=>p.audios.reduce((sum,x)=>sum+x.plays,0);
+ page.onLoad();page.onShow();page.preview({detail:{i:20}});page.clearPreview();assert.equal(plays(),0);
+ page.pick({detail:{i:20}});assert.equal(plays(),1);page.askAI(false);const w=p.workers.at(-1);w.receive({id:w.message.id,i:60});assert.equal(plays(),2);
+ page.pick({detail:{i:20}});page.undo();assert.equal(plays(),2);
+ page.toggleSound({detail:{value:false}});assert.equal(Store.read(Store.KEYS.sound,true),false);page.onHide();page.onShow();assert.equal(page.data.soundEnabled,false);
+ const lesson=loadPage('lesson',p.wx);lesson.onLoad({id:'1'});lesson.pick({detail:{i:17}});assert.equal(plays(),2);lesson.onUnload();
+ page.toggleSound({detail:{value:true}});const next=loadPage('lesson',p.wx);next.onLoad({id:'1'});next.pick({detail:{i:17}});assert.equal(plays(),3);assert.equal(p.audios.at(-1).src,'/audio/stone.wav');next.onHide();next.onUnload();page.onUnload();assert(p.audios.every(x=>x.destroyed));
 });

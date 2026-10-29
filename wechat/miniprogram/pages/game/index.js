@@ -1,14 +1,15 @@
 const E=require('../../shared/engine');
 const {Session}=require('../../utils/session');
 const Store=require('../../utils/storage');
+const {StoneSound}=require('../../utils/sound');
 const {coord,signed}=require('../../utils/format');
 const views=[{id:'normal',label:'棋盘'},{id:'liberties',label:'气'},{id:'influence',label:'势力'},{id:'territory',label:'地盘'}];
 Page({
- data:{views,view:'normal',globalMode:false,boardSize:300,previewEnabled:true,busy:false,settings:null,detail:null,saved:true,aiError:'',sizes:['9 路 · 入门','13 路 · 进阶','19 路 · 标准'],colors:['执黑 · 先行','执白 · 后行'],difficulties:['轻松入门','认真思考','深入挑战']},
- onLoad(){this._serial=0;this._view='normal';this._preview=null;this._hint=null;this._selected=-1;},
- onShow(){this._active=true;this._session=new Session(Store.read(Store.KEYS.game,null),Store.stats());this._preview=null;this._hint=null;this._selected=-1;this.setData({previewEnabled:Store.read(Store.KEYS.preview,true)!==false,aiError:'',detail:null,settings:null});this.resize();this.render();this.scheduleAI();},
- onHide(){this._active=false;this.stopAI();this._preview=null;this._hint=null;this.cancelBoard();if(this.data.globalMode){this.setData({globalMode:false});wx.showTabBar({animation:false});}},
- onUnload(){this.onHide();},
+ data:{soundEnabled:true,views,view:'normal',globalMode:false,boardSize:300,previewEnabled:true,busy:false,settings:null,detail:null,saved:true,aiError:'',sizes:['9 路 · 入门','13 路 · 进阶','19 路 · 标准'],colors:['执黑 · 先行','执白 · 后行'],difficulties:['轻松入门','认真思考','深入挑战']},
+ onLoad(){this._sound=new StoneSound(wx,Store.read(Store.KEYS.sound,true)!==false,'/audio/stone.wav');this._serial=0;this._view='normal';this._preview=null;this._hint=null;this._selected=-1;},
+ onShow(){const enabled=Store.read(Store.KEYS.sound,true)!==false;this._sound.setEnabled(enabled);this.setData({soundEnabled:enabled});this._active=true;this._session=new Session(Store.read(Store.KEYS.game,null),Store.stats());this._preview=null;this._hint=null;this._selected=-1;this.setData({previewEnabled:Store.read(Store.KEYS.preview,true)!==false,aiError:'',detail:null,settings:null});this.resize();this.render();this.scheduleAI();},
+ onHide(){if(this._sound)this._sound.stop();this._active=false;this.stopAI();this._preview=null;this._hint=null;this.cancelBoard();if(this.data.globalMode){this.setData({globalMode:false});wx.showTabBar({animation:false});}},
+ onUnload(){this.onHide();if(this._sound)this._sound.destroy();},
  onResize(){this.resize();},
  resize(){const w=wx.getWindowInfo?wx.getWindowInfo():wx.getSystemInfoSync();const size=this.data.globalMode?Math.max(120,Math.min(w.windowWidth-28,w.windowHeight-250)):w.windowWidth-48;this.setData({boardSize:Math.floor(size)});},
  save(){const saved=Store.saveGame(this._session);this.setData({saved});if(!saved&&!this._storageWarned){this._storageWarned=true;this.toast('存储空间不足，本次进度暂未保存');}},
@@ -27,9 +28,10 @@ Page({
   const captures={black:0,white:0};s.moves.forEach(move=>captures[move.color===1?'black':'white']+=move.captured.length);
   this.setData({n:s.n,canPreview:this.data.previewEnabled&&!this.data.busy&&!s.ended&&s.turn===s.human,board:b,last:trial?-1:last?last.i:-1,previewAt:trial?trial.i:-1,hintAt:this._hint?this._hint.i:-1,captured:trial?trial.captured:[],liberties:g?[...g.libs]:[],groupStones:g?g.stones:[],inf:this._view==='influence'||trial&&this._view==='normal'?e.inf||E.influence(b,s.n):[],owners:this._view==='territory'?e.owner:[],dead:s.dead,score:{black:e.black,white:e.white+s.komi,neutral:e.neutral,label:s.ended?'终局数子':trial?'试落估算':'实时估算',verdict:`${e.diff===0?'双方持平':(e.diff>0?'黑':'白')+'方'+(s.ended?'':'估算')+'领先 '+Math.abs(e.diff).toFixed(1)+' 点'}`},coach,captures,ended:s.ended,scored:s.scored,humanLabel:s.human===1?'黑':'白',turnLabel:s.ended?'数子中':this.data.busy?'AI 思考中':s.turn===s.human?'轮到你落子':'等待 AI 应对',moves:s.moves.length,previewInfo:p?{point:coord(p.i,s.n),error:p.error||'',title:p.error?'不能落子':p.explanation.title,reason:p.error||p.explanation.risks[0]||p.explanation.reasons[0],metrics:p.error?'':`${p.libs} 口气 · 提 ${p.captured.length} 子 · 黑 ${signed(p.blackDelta)} / 白 ${signed(p.whiteDelta)}`} :null});
  },
- pick(e){const i=e.detail.i,s=this._session.state;if(this.data.busy)return;if(s.ended){if(this._session.toggleDead(i)){this.save();this.render();}return;}if(this._view==='liberties'&&s.board[i]){this._selected=i;this._preview=null;this.render();return;}this._preview=null;this._hint=null;const r=this._session.move(i);if(r.error){this.toast(r.error);this.render();return;}this._selected=-1;this.save();this.render();this.scheduleAI();},
+ pick(e){const i=e.detail.i,s=this._session.state;if(this.data.busy)return;if(s.ended){if(this._session.toggleDead(i)){this.save();this.render();}return;}if(this._view==='liberties'&&s.board[i]){this._selected=i;this._preview=null;this.render();return;}this._preview=null;this._hint=null;const r=this._session.move(i);if(r.error){this.toast(r.error);this.render();return;}this._selected=-1;if(i>=0)this._sound.play();this.save();this.render();this.scheduleAI();},
  preview(e){const s=this._session.state;if(!this.data.previewEnabled||this.data.busy||s.ended||s.turn!==s.human)return;const i=e.detail.i;this._preview=i>=0&&!s.board[i]?this._session.preview(i):null;this.render();},
  clearPreview(){if(this._preview){this._preview=null;this.render();}},
+ toggleSound(e){const enabled=e.detail.value;this._sound.setEnabled(enabled);this.setData({soundEnabled:enabled});if(!Store.write(Store.KEYS.sound,enabled))this.toast('音效设置暂未保存');},
  togglePreview(e){this.cancelBoard();this._preview=null;const value=e.detail.value;const saved=Store.write(Store.KEYS.preview,value);this.setData({previewEnabled:value});if(!saved)this.toast('预览设置暂未保存');this.render();},
  changeView(e){this._view=e.currentTarget.dataset.view;this.setData({view:this._view});this.render();},
  toggleGlobal(){const enabled=!this.data.globalMode;this.cancelBoard();this._preview=null;this.setData({globalMode:enabled});if(enabled)wx.hideTabBar({animation:false,success:()=>this.resize()});else wx.showTabBar({animation:false,success:()=>this.resize()});this.resize();this.render();},
@@ -42,7 +44,7 @@ Page({
    w.onMessage(result=>{if(!this._active||id!==this._serial||result.id!==id||E.key(this._session.state.board)!==position)return;
     if(result.error){fail();return;}this.stopAI();
     if(isHint){if(result.i>=0){const p=this._session.preview(result.i);if(p.error){this.toast(p.error);this.render();return;}this._hint={...p,search:result};this.render();this.openAnalysis();}else{this._hint=null;this.render();this.toast('目前可以考虑停一手。');}}
-    else{const r=this._session.move(result.i,s.turn);if(r.error){this.setData({aiError:r.error});this.render();return;}this._hint=null;this.save();this.render();if(result.i===-1)this.toast('AI 选择停一手。');}
+    else{const r=this._session.move(result.i,s.turn);if(r.error){this.setData({aiError:r.error});this.render();return;}this._hint=null;if(result.i>=0)this._sound.play();this.save();this.render();if(result.i===-1)this.toast('AI 选择停一手。');}
    });
    if(w.onError)w.onError(fail);if(w.onProcessKilled)w.onProcessKilled(fail);
    this._watchdog=setTimeout(fail,45000);

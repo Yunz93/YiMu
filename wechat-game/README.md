@@ -24,7 +24,7 @@ npm run check:wechat-game
 npm test
 ```
 
-## Interface preview · 1.5.2
+## Interface preview · 1.5.3
 
 The Mini Game follows the website’s cream, sage-green, and wood palette. Players, live estimates, the preview switch, and game actions share a board card; subtle segmented views and icon navigation replace large filled controls. The learning center adds lesson-board illustrations, and settings/explanation sheets size to their content.
 
@@ -38,6 +38,7 @@ Fullscreen hides the brand and slogan, compacts scores into one row, maximizes t
 
 ## Features
 
+- Local stone sounds accompany legal human/AI moves and actual lesson placements. Toggle **落子音效** in game settings; the preference persists. Preview, undo, pass, dead-group marking, and restoring progress remain quiet. Playback respects the device silent switch. Audio stops in the background and resources are released on exit.
 - Native Canvas scenes for the game, unified learning center, all 16 interactive lessons, settings, explanations, and About/privacy.
 - 9×9, 13×13, and 19×19; Black/White choice; three local AI search settings in a Mini Game Worker.
 - Tap once to play; hold for 0.4 seconds to preview, drag to inspect another point, release without playing. Swipes before activation scroll the scene. Multitouch/system cancellation never commits a move.
