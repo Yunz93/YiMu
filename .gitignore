@@ -7,6 +7,7 @@ node_modules/
 *.log
 .DS_Store
 coverage/
+__pycache__/
 
 # Local WeChat DevTools account settings
 wechat/project.private.config.json

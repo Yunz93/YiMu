@@ -79,9 +79,10 @@ npm run build
 python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/browser/fullscreen.py
+python3 tests/browser/settings.py
 ```
 
-此检查会启动临时本地服务器，覆盖 9／13／19 路棋盘的桌面、平板、手机和横屏尺寸，并验证预览不挤动棋盘、缩放、落子与 AI 应对。安装了系统 Chromium 时会直接使用。
+此检查会启动临时本地服务器，覆盖 9／13／19 路棋盘的桌面、平板、手机和横屏尺寸，并验证预览不挤动棋盘、缩放、落子与 AI 应对，以及新开局选项文字完整显示。安装了系统 Chromium 时会直接使用。
 
 ## 学习与试落
 

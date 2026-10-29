@@ -79,9 +79,10 @@ For real Chromium layout regression checks, install the optional developer tools
 python3 -m pip install playwright
 python3 -m playwright install chromium
 python3 tests/browser/fullscreen.py
+python3 tests/browser/settings.py
 ```
 
-This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, and play/AI responses. An installed system Chromium is used when available.
+This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, play/AI responses, and complete settings option labels. An installed system Chromium is used when available.
 
 ## Learning flow
 
