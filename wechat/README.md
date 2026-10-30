@@ -20,7 +20,7 @@ Never add an AppSecret, upload private key, or identity documents to the reposit
 
 ## Missing `miniprogram/game.json` / environment reports `mg`
 
-For an existing Mini Game AppID, use the [dedicated `wechat-game/` edition](../wechat-game/README.md).
+This repository maintains the website and regular Mini Program. Use a regular Mini Program AppID with this project.
 
 DevTools is loading the project as a **Mini Game**. This repository supplies a regular Mini Program with `app.js` and `app.json`, so no `game.json` is expected.
 
@@ -30,7 +30,7 @@ DevTools is loading the project as a **Mini Game**. This repository supplies a r
 4. Verify the AppID belongs to a regular Mini Program in the WeChat console. Choose a Mini Program test account, rather than a Mini Game test account, if testing locally.
 5. If account type and configuration are correct, clear DevTools cache and recompile. Re-import from a fresh project record if the old record retains Mini Game mode, keeping source files intact.
 
-`npm run check:wechat` now validates the checked-in and local configuration, but cannot infer account type from the AppID or change a cached DevTools session. Do not add an empty `game.json` or rename `app.json`: use the dedicated `wechat-game/` project instead.
+`npm run check:wechat` now validates the checked-in and local configuration, but cannot infer account type from the AppID or change a cached DevTools session. Do not add an empty `game.json` or rename `app.json`; import this project with a regular Mini Program AppID.
 
 ## Features and behavior
 

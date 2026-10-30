@@ -24,10 +24,6 @@ The application interface is currently in **Simplified Chinese**. Project docume
 - **Pick up where you left off:** games and learning progress are saved in the current browser using `localStorage`.
 - **Responsive and lightweight:** native HTML, CSS, and JavaScript modules with no runtime npm dependencies, backend, database, or AI API key.
 
-## WeChat Mini Game (Mini Game AppIDs)
-
-For a Mini Game AppID or the DevTools `mg` runtime, import **[`wechat-game/`](wechat-game/README.md)**. This edition has real `game.js` / `game.json` entries and Canvas scenes for play, local AI, touch previews, recommendations, the unified learning center, and all 16 lessons. Run `npm run build:wechat-game` to synchronize shared code; standalone archives are ready to import. Read the [Mini Game setup guide](wechat-game/README.md) or [中文说明](wechat-game/README.zh-CN.md).
-
 ## WeChat Mini Program
 
 A native WeChat edition is available in [`wechat/`](wechat/README.md), with a Canvas board, local AI Worker, touch previews, all 16 lessons, and the unified learning center. Run `npm run build:wechat`, then import **the `wechat/` directory** into WeChat DevTools using your AppID. Read the [setup and release guide](wechat/README.md) or [中文说明](wechat/README.zh-CN.md). Mini Program filing, category eligibility, physical-device testing, upload, and review remain separate from GitHub/Vercel publishing.
@@ -86,7 +82,7 @@ python3 tests/browser/sound.py
 
 This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, play/AI responses, and complete settings option labels. An installed system Chromium is used when available.
 
-The 140 ms stone click is synthesized locally. After changing `stoneSamples()` in `dist/stone-sound.js`, run `npm run build:sound` to regenerate the WeChat WAV assets; `npm run check:sound` verifies them.
+The 140 ms stone click is synthesized locally. After changing `stoneSamples()` in `dist/stone-sound.js`, run `npm run build:sound` to regenerate the WeChat WAV assets; `npm run check:sound` verifies the web and Mini Program assets.
 
 ## Learning flow
 

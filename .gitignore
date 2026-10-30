@@ -12,5 +12,3 @@ __pycache__/
 # Local WeChat DevTools account settings
 wechat/project.private.config.json
 wechat/**/*.map
-wechat-game/project.private.config.json
-wechat-game/**/*.map
