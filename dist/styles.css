@@ -187,3 +187,61 @@ body.board-global-mode{overflow:hidden}
 .global-sound-toggle{display:none}
 .board-global-mode .global-sound-toggle{display:inline-flex;flex-shrink:0}
 .sound-toggle[aria-pressed="false"]{color:#a0a993}
+
+/* A lesson is a viewport-sized workspace: keep the board, feedback and actions together. */
+dialog.lesson-modal{width:min(1040px,calc(100% - 24px));height:min(780px,calc(100vh - 24px));height:min(780px,calc(100dvh - 24px));max-height:none;padding:18px 20px;overflow:hidden}
+dialog.lesson-modal[open]{display:flex;flex-direction:column}
+.lesson-modal .modal-header{flex:0 0 32px;margin:0 0 12px;min-width:0}
+.lesson-modal #modal-content{flex:1;min-width:0;min-height:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:12px}
+.lesson-workspace{display:grid;grid-template-columns:minmax(240px,.85fr) minmax(0,1.25fr);gap:24px;min-width:0;min-height:0}
+.lesson-guide{display:flex;flex-direction:column;gap:14px;min-width:0;min-height:0}
+.lesson-modal #lesson-title{flex:none;margin:0;font-size:24px;line-height:1.5}
+.lesson-explanation{min-height:0;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable}
+.lesson-explanation summary{cursor:pointer;font-size:12px;font-weight:550;color:var(--green);line-height:24px}
+.lesson-modal .lesson-explanation p{margin:8px 0 0;font-size:13px;line-height:1.9}
+.lesson-modal .lesson-instruction{flex:none;margin:0;padding:12px;line-height:1.8}
+.lesson-practice{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.lesson-board-tools{display:flex;justify-content:flex-end;flex:none}
+.lesson-board-tools .button{font-size:11px;padding:5px 10px;min-height:30px}
+.lesson-modal .lesson-board-scroll{display:flex;align-items:center;justify-content:center;flex:1;min-width:0;min-height:0;overflow:hidden;padding:6px;border-radius:8px;background:#f4f5ed}
+.lesson-modal .mini-board{flex:none;width:var(--lesson-board-size,100%);height:var(--lesson-board-size,100%);min-width:0;max-width:none;margin:0;aspect-ratio:1}
+.lesson-modal .mini-board svg{display:block;width:100%;height:100%;min-width:0;touch-action:manipulation}
+.lesson-modal .lesson-board-zoomed{display:block;overflow:auto;overscroll-behavior:contain}
+.lesson-modal .lesson-board-zoomed .mini-board{margin:0}
+.lesson-response{flex:none;min-width:0;display:grid;gap:8px}
+.lesson-modal .lesson-answers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:0}
+.lesson-modal .lesson-answers .button{display:flex;align-items:center;justify-content:center;min-width:0;min-height:40px;padding:6px 8px;font-size:11px;line-height:1.6;overflow-wrap:anywhere}
+.lesson-modal .lesson-feedback{height:66px;min-height:0;margin:0;padding:8px 10px;overflow:auto;overscroll-behavior:contain;scrollbar-gutter:stable;border-radius:6px;background:#edf3e5;font-size:12px;line-height:1.8;text-align:left}
+.lesson-modal .modal-actions{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin:0;padding-top:12px;border-top:1px solid var(--border)}
+.lesson-modal .modal-actions .button{min-width:0;min-height:42px;padding:8px;font-size:12px}
+@media(max-width:680px) and (orientation:portrait){
+ dialog.lesson-modal{width:calc(100% - 12px);height:calc(100vh - 12px);height:calc(100dvh - 12px);padding:12px}
+ .lesson-modal .modal-header{flex-basis:28px;margin-bottom:8px}
+ .lesson-modal #modal-content{gap:8px}
+ .lesson-workspace{grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr);gap:10px}
+ .lesson-guide{gap:6px;max-height:34vh;max-height:34dvh}
+ .lesson-modal #lesson-title{font-size:18px;line-height:1.4}
+ .lesson-explanation{flex:0 1 auto}
+ .lesson-modal .lesson-explanation p{font-size:12px;line-height:1.7}
+ .lesson-modal .lesson-instruction{padding:7px 10px;font-size:11px;line-height:1.7}
+ .lesson-practice{gap:6px}
+ .lesson-response{gap:6px}
+ .lesson-modal .lesson-feedback{height:56px;padding:6px 8px;font-size:11px}
+ .lesson-modal .lesson-answers .button{min-height:38px;padding:5px;font-size:10px}
+ .lesson-modal .modal-actions{gap:6px;padding-top:8px}
+ .lesson-modal .modal-actions .button{font-size:11px;padding:6px 4px;min-height:42px}
+}
+@media(max-height:500px) and (orientation:landscape){
+ dialog.lesson-modal{height:calc(100vh - 12px);height:calc(100dvh - 12px);padding:8px 12px}
+ .lesson-modal .modal-header{flex-basis:26px;margin-bottom:6px}
+ .lesson-workspace{grid-template-columns:minmax(180px,.8fr) minmax(0,1.2fr);gap:16px}
+ .lesson-guide{gap:8px}
+ .lesson-modal #lesson-title{font-size:18px}
+ .lesson-modal .lesson-instruction{padding:8px;font-size:11px}
+ .lesson-practice{gap:6px}
+ .lesson-modal .lesson-feedback{height:44px;padding:5px 8px;font-size:11px}
+ .lesson-modal .lesson-answers .button{min-height:32px;padding:4px 6px;font-size:10px}
+ .lesson-modal #modal-content{gap:6px}
+ .lesson-modal .modal-actions{padding-top:6px}
+ .lesson-modal .modal-actions .button{min-height:34px;padding:5px}
+}
