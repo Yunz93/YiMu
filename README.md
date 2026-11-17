@@ -78,9 +78,10 @@ python3 -m playwright install chromium
 python3 tests/browser/fullscreen.py
 python3 tests/browser/settings.py
 python3 tests/browser/sound.py
+python3 tests/browser/lessons.py
 ```
 
-This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, play/AI responses, and complete settings option labels. An installed system Chromium is used when available.
+This starts a temporary local server and checks 9×9/13×13/19×19 layouts on desktop, tablet, phone, and landscape viewports, stable previews, resizing, play/AI responses, and complete settings option labels. The lesson check covers all 16 courses, including small-board stone and hit-target bounds, completion, reset, zoom, and dialog cleanup. An installed system Chromium is used when available.
 
 The 140 ms stone click is synthesized locally. After changing `stoneSamples()` in `dist/stone-sound.js`, run `npm run build:sound` to regenerate the WeChat WAV assets; `npm run check:sound` verifies the web and Mini Program assets.
 

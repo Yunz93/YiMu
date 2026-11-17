@@ -78,9 +78,10 @@ python3 -m playwright install chromium
 python3 tests/browser/fullscreen.py
 python3 tests/browser/settings.py
 python3 tests/browser/sound.py
+python3 tests/browser/lessons.py
 ```
 
-此检查会启动临时本地服务器，覆盖 9／13／19 路棋盘的桌面、平板、手机和横屏尺寸，并验证预览不挤动棋盘、缩放、落子与 AI 应对，以及新开局选项文字完整显示。安装了系统 Chromium 时会直接使用。
+此检查会启动临时本地服务器，覆盖 9／13／19 路棋盘的桌面、平板、手机和横屏尺寸，并验证预览不挤动棋盘、缩放、落子与 AI 应对，以及新开局选项文字完整显示。课程检查覆盖全部 16 课的小棋盘棋子与点击范围、完成练习、重做、缩放和弹窗清理。安装了系统 Chromium 时会直接使用。
 
 140 毫秒的落盘声由本地合成。修改 `dist/stone-sound.js` 中的 `stoneSamples()` 后，运行 `npm run build:sound` 重新生成微信 WAV 资源；`npm run check:sound` 验证网页和小程序的音效一致。
 

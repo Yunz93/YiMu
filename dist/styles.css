@@ -231,6 +231,10 @@ dialog.lesson-modal[open]{display:flex;flex-direction:column}
  .lesson-modal .modal-actions{gap:6px;padding-top:8px}
  .lesson-modal .modal-actions .button{font-size:11px;padding:6px 4px;min-height:42px}
 }
+@media(max-width:280px) and (orientation:portrait){
+ .lesson-modal .lesson-answers .button{padding:4px 3px;line-height:1.4}
+ .lesson-modal .lesson-feedback{height:44px}
+}
 @media(max-height:500px) and (orientation:landscape){
  dialog.lesson-modal{height:calc(100vh - 12px);height:calc(100dvh - 12px);padding:8px 12px}
  .lesson-modal .modal-header{flex-basis:26px;margin-bottom:6px}

@@ -28,7 +28,9 @@ function save(){try{localStorage.setItem('yimu-game',JSON.stringify(state));loca
 function toast(t){$('#toast').textContent=t;$('#toast').classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('#toast').classList.remove('show'),3300);}
 function updateJourney(){const count=stats.completed.length;$('#journey-fill').style.width=count/lessons.length*100+'%';$('#journey-text').textContent=count?`已完成 ${count} / ${lessons.length} 节课程`:'完成入门课，点亮围棋之旅';}
 function defs(){return '<defs><radialGradient id="stone-b" cx="32%" cy="25%" r="75%"><stop stop-color="#5c6057"/><stop offset=".4" stop-color="#30362d"/><stop offset="1" stop-color="#152015"/></radialGradient><radialGradient id="stone-w" cx="32%" cy="25%" r="75%"><stop stop-color="#fff"/><stop offset=".65" stop-color="#f7f8f2"/><stop offset="1" stop-color="#d5dacc"/></radialGradient></defs>';}
-function boardSVG(b,n,{interactive=false,mini=false,last=-1,owners=null,inf=null,libs=null,dead=[],hintAt=null,previewAt=-1,captured=[]}={}){const pad=42,step=476/(n-1),r=step*.445,at=i=>[pad+i%n*step,pad+Math.floor(i/n)*step];let s=defs();
+// Leave room for corner stones, hit targets, outlines and shadows on small boards.
+function boardGeometry(n){const pad=Math.max(42,Math.ceil((560*.49+10*(n-1))/(n-1+.98))),step=(560-2*pad)/(n-1);return {pad,step,r:step*.445};}
+function boardSVG(b,n,{interactive=false,mini=false,last=-1,owners=null,inf=null,libs=null,dead=[],hintAt=null,previewAt=-1,captured=[]}={}){const {pad,step,r}=boardGeometry(n),at=i=>[pad+i%n*step,pad+Math.floor(i/n)*step];let s=defs();
 if(inf||owners)for(let i=0;i<b.length;i++){if(b[i])continue;const [x,y]=at(i),v=inf?.[i],c=owners?.[i];if(inf&&Math.abs(v)>.06)s+=`<rect x="${x-step*.49}" y="${y-step*.49}" width="${step*.98}" height="${step*.98}" rx="${step*.1}" fill="${v>0?'#426b45':'#f7f8f0'}" opacity="${Math.abs(v)*.56}"/>`;if(owners&&c)s+=`<rect x="${x-5}" y="${y-5}" width="10" height="10" rx="1.5" fill="${c===1?'#40543b':'#fffdf4'}" stroke="${c===1?'#30412d':'#b8b49b'}" stroke-width=".6"/>`;}
 for(let j=0;j<n;j++){const p=pad+j*step;s+=`<path d="M${pad} ${p}H${560-pad}M${p} ${pad}V${560-pad}" stroke="#997b47" stroke-width="${j===0||j===n-1?'1.2':'.8'}" opacity=".73"/>`;if(!mini){const col='ABCDEFGHJKLMNOPQRST'[j];s+=`<text x="${p}" y="23" text-anchor="middle" fill="#9f895f" font-size="11" font-family="sans-serif">${col}</text><text x="23" y="${p+4}" text-anchor="middle" fill="#9f895f" font-size="11" font-family="sans-serif">${n-j}</text><text x="${p}" y="545" text-anchor="middle" fill="#9f895f" font-size="11" font-family="sans-serif">${col}</text><text x="539" y="${p+4}" text-anchor="middle" fill="#9f895f" font-size="11" font-family="sans-serif">${n-j}</text>`;}}
 const stars=n===19?[3,9,15]:n===9?[2,4,6]:n===13?[3,6,9]:n===5?[2]:[];for(const x of stars)for(const y of stars){if(n!==19&&(x===stars[1]&&y!==stars[1]||y===stars[1]&&x!==stars[1]))continue;s+=`<circle cx="${pad+x*step}" cy="${pad+y*step}" r="2.6" fill="#8d7248"/>`;}
@@ -39,7 +41,7 @@ if(previewAt>=0){const [x,y]=at(previewAt);s+=`<circle cx="${x}" cy="${y}" r="${
 if(hintAt!==null&&!b[hintAt]){const [x,y]=at(hintAt);s+=`<circle cx="${x}" cy="${y}" r="${r*.77}" fill="#f4f5db33" stroke="#799d5c" stroke-width="2" stroke-dasharray="4 4"/><circle cx="${x}" cy="${y}" r="3" fill="#6a8e50"/>`;}
 if(interactive)s+=boardHitSVG(b,n);
 return s;}
-function boardHitSVG(b,n){const pad=42,step=476/(n-1),at=i=>[pad+i%n*step,pad+Math.floor(i/n)*step];let s='';for(let i=0;i<b.length;i++){const [x,y]=at(i);s+=`<rect class="intersection" data-i="${i}" role="button" tabindex="${i===0?0:-1}" aria-label="${coord(i,n)} ${b[i]?(b[i]===1?'黑棋':'白棋'):'空位，点击落子'}" x="${x-step*.49}" y="${y-step*.49}" width="${step*.98}" height="${step*.98}" rx="${step*.2}"/>`;}return s;}
+function boardHitSVG(b,n){const {pad,step}=boardGeometry(n),at=i=>[pad+i%n*step,pad+Math.floor(i/n)*step];let s='';for(let i=0;i<b.length;i++){const [x,y]=at(i);s+=`<rect class="intersection" data-i="${i}" role="button" tabindex="${i===0?0:-1}" aria-label="${coord(i,n)} ${b[i]?(b[i]===1?'黑棋':'白棋'):'空位，点击落子'}" x="${x-step*.49}" y="${y-step*.49}" width="${step*.98}" height="${step*.98}" rx="${step*.2}"/>`;}return s;}
 function paintBoard(visual,n){
  const root=$('#board');
  if(!$('#board-visual'))root.innerHTML='<g id="board-visual" aria-hidden="true"></g><g id="board-hit-area"></g>';
@@ -195,7 +197,7 @@ function closeModal(){$('#modal').close();stopModalLesson();activateNav('game');
 let lessonLayoutCleanup=null;
 function stopModalLesson(){lessonLayoutCleanup?.();lessonLayoutCleanup=null;$('#modal').classList.remove('lesson-modal');$('#modal').removeAttribute('aria-labelledby');}
 function fitLessonBoard(){
- const modal=$('#modal'),area=$('.lesson-board-scroll'),board=$('.lesson-modal .mini-board');
+ const modal=$('#modal'),area=$('.lesson-board-scroll'),board=area?.querySelector('.mini-board');
  if(!area||!board)return;
  let zoomed=false;
  const resize=()=>{
@@ -268,7 +270,7 @@ function openLesson(index){
  function redraw(){
   if(previousSoundBoard&&localBoard.some((color,i)=>color&&!previousSoundBoard[i]))sound.play();previousSoundBoard=localBoard.slice();
   let html=boardSVG(localBoard,l.n,{interactive:true,mini:l.n!==19,last,dead:deadMarks,captured:capturedMarks,inf:l.mode==='compare'?influence(localBoard,l.n):null});
-  const pad=42,step=476/(l.n-1);
+  const {pad,step}=boardGeometry(l.n);
   if(['libs','eyes','coordinates'].includes(l.mode))for(const p of selectedPoints)html+=`<circle cx="${pad+p%l.n*step}" cy="${pad+Math.floor(p/l.n)*step}" r="${Math.min(12,step*.3)}" fill="#baca94" stroke="#6f8d4e" stroke-width="2" pointer-events="none"/>`;
   $('#lesson-board').innerHTML=html;
  }
